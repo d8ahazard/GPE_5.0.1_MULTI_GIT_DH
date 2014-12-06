@@ -116,32 +116,18 @@ endif;
 	"Make Gapps uninstallable","Moves most gapps to data",1
 	
 	);
-	if prop("mods.prop","item0.1") == "1" then
-		writetmpfile("modsprop","longkill=1");
-	endif;
-	if prop("mods.prop","item0.2") == "1" then
-		writetmpfile("modsprop","keepmenu=1");
-	endif;
-	if prop("mods.prop","item0.3") == "1" then
-		writetmpfile("modsprop","battpercent=1");
-	endif;
-	
-	
-	####################KERNEL######################################
- 
-	selectbox(
-	"Kernel Selection:",
-	"Please select:",
-	"@apps",
-	"kernel.prop",
-  
-	"Stock","Stock Kernel",1,
-	"Elite GPE","by Buckmarble",0,
-	"BeyondStock","by Captain_Throwback",0,
-	"Skydragon","by HolyAngel",0
-);
+if prop("mods.prop","item.0.1")=="1" then
+	writetmpfile("addprop", "backkey=1");
+endif;
+if prop("mods.prop","item.0.2")=="1" then
+	writetmpfile("addprop", "showmenu=1");
+endif;
+if prop("mods.prop","item.0.3")=="1" then
+	writetmpfile("addprop", "battpct=1");
+endif;
+
 ##########Navbar##############################################
-if prop("common.prop","item.0.5")=="1" then
+if prop("mods.prop","item.0.5")=="1" then
   selectbox(
     "navbar size",
     "please indicate:",
