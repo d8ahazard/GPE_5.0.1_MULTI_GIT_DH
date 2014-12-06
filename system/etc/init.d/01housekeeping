@@ -1,26 +1,32 @@
 #!/system/bin/sh
 sysrw
 datarw
-#chmod 755 /system/aroma/mods.prop
-. /system/aroma/modsprop
 
-#if
-#	[ longkill -eq "1" ]
-#then
-#    sh /system/bin/tweaks sys sh /system/bin/tweaks_backkey_kill 1
-#fi
+#Because nested if statements are fun
+if [ -e /sdcard2/0P6BIMG.zip ]; then
 
-#if
-#	[ keepmenu -eq "1" ]
-#then
-#   	sh /system/bin/tweaks sys sh /system/bin/tweaks_show_menu_persist 1
-#fi
-#
-#if
-#	[ battpercent -eq "1" ]
-#   	sh /system/bin/tweaks sys status_bar_show_battery_percent 1
-#fi
+	chmod 755 /system/aroma/addprop
+	#source the magical file
+	. /system/aroma/addprop
+	#enable longpress on back
+	if
+		[ "$backkey" = "1" ];
+	then
+		sh /system/bin/tweaks sys tweaks_backkey_kill 1
+	fi
 
+	if
+		[ "$showmenu" = "1" ];
+	then
+		sh /system/bin/tweaks sys tweaks_show_menu_persist 1
+	fi
+
+	if
+		[ "$battpct" = "1" ];
+	then
+		sh /system/bin/tweaks sys status_bar_show_battery_percent 1
+	fi
+fi
 # disable google checkin services
 sh /system/bin/tweaks goog perform_market_checkin false
 sh /system/bin/tweaks goog checkin_dropbox_upload true
@@ -55,7 +61,7 @@ fi
 
 #If we find one of our insertions
 RETVALUE=`sqlite3 /data/data/com.google.android.gsf/databases/gservices.db "SELECT value FROM main WHERE name LIKE 'perform_market_checkin';"`;
-if [ "$RETVALUE" -eq "false" ]; then
+if [ "$RETVALUE" = "false" ]; then
 	# burn the evidence
 	busybox rm /system/etc/init.d/01housekeeping
 fi
