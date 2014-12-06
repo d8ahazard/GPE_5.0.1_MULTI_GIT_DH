@@ -1,0 +1,16 @@
+#!/system/bin/sh
+#Init.d Permissive SELinux
+
+busybox mount -o remount,rw -t auto /system
+busybox mount -o remount,rw -t auto /data
+# disable enforce so we can run our scripts
+echo "0" > /sys/fs/selinux/enforce
+
+sysrw
+datarw
+
+su system setenforce 0
+SELINUX=permissive
+echo "Permissive SELinux by @hsbadr" >> /data/SELinux.log
+echo "executed on $(date +"%d-%m-%Y %r" )
+

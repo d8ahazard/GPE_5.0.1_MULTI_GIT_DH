@@ -1,0 +1,8 @@
+<@center><b><#selectbg_g>License Agreement</#></b>
+
+<b>Terms and conditions</b>: NO part of this rom may be used without express permission from Team SkyDragon.
+Team SkyDragon are in no way liable for any harm that may come to your phone from flashing this ROM, although it has been tested and should work %100 fine for all.
+
+<b>Agree</b>=Flash :) <b>Don't Agree</b>=No flash :(
+
+If you agree, check the box, Enjoy and Happy Flashing! ^^

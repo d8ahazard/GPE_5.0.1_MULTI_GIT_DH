@@ -1,0 +1,796 @@
+assert(unmount("/system") || ui_print("Preparing system for installation..."));
+mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "/system");
+assert(unmount("/data") || ui_print("Preparing data for installation..."));
+mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/userdata", "/data");
+set_progress(0.08);
+package_extract_dir("tools", "/tmp");
+set_perm_recursive(0, 0, 0777, 0777, "/tmp");
+
+if
+	file_getprop("/tmp/aroma-data/wipe.prop","selected.0") == "1"
+then
+    ui_print("@Executing Full Wipe");
+	
+	ui_print("-- Erasing & formatting /system as EXT4");
+	assert(unmount("/system") || ui_print("(Unmounted System partition..)"));
+	format("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "0", "/system");
+	set_progress(0.1);
+	ui_print("System Partition Formatted!");
+	run_program("/sbin/sleep", "2");
+	ui_print("System Partition Formatted!");
+	ui_print("-- Erasing & formatting /cache as EXT4");
+	run_program("/sbin/mount", "/cache");
+	delete_recursive("/cache");
+	set_progress(0.12);
+	ui_print("Cache Partition Formatted");
+	ui_print("-- Erasing & formatting /data as EXT4");
+    ui_print("Formatting Data Partition Via Script");
+    package_extract_file("tools/wipe.sh", "/tmp/wipe.sh");
+    set_perm(0, 0, 0777, "/tmp/wipe.sh");
+	run_program("/sbin/mount", "/data");
+    run_program("/tmp/wipe.sh");;
+	set_progress(0.16);
+	ui_print("Data Partition Formatted");
+	ui_print("-- Removing system files from SD card");
+    delete_recursive("/sdcard/.android_secure");
+    delete_recursive("/sdcard/.bookmark_thumb1");
+    delete_recursive("/sdcard/.data");
+    delete_recursive("/sdcard/Android");
+    delete_recursive("/sdcard/bugreports");
+    delete_recursive("/sdcard/LazyList");
+    delete_recursive("/sdcard/LOST.DIR");
+    delete_recursive("/sdcard/tmp");
+    run_program("/sbin/sleep", "2");
+	set_progress(.2);
+endif;
+
+if
+	file_getprop("/tmp/aroma-data/wipe.prop","selected.0") == "2"
+then
+	ui_print("@Executing Dirty Wipe");
+	set_progress(0.1);
+	ui_print("-- Erasing & formatting /system as EXT4");
+	assert(unmount("/system") || ui_print("(Unmounted System partition..)"));
+	format("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "0", "/system");
+	run_program("/sbin/sleep", "2");
+	set_progress(0.15);
+	ui_print("System Partition Formatted!");
+	ui_print("-- Erasing & formatting /cache as EXT4");
+	run_program("/sbin/mount", "/cache");
+	delete_recursive("/cache");
+	ui_print("Cache Partition Formatted");
+	set_progress(0.2);
+	ui_print("Cleaning up some stuff");
+	delete("/data/data/com.android.providers.telephony/databases/telephony.db");
+	delete("/data/data/com.android.providers.telephony/databases/telephony.db-journal");
+	delete_recursive("/data/data/com.android.providers.telephony/shared_prefs");
+	ui_print("Deleting old apps");
+	delete_recursive("/data/data/com.android.chrome-1");
+	delete_recursive("/data/data/com.android.chrome-2");
+	delete_recursive("/data/data/com.android.chrome-3");
+	delete_recursive("/data/data/com.google.android.apps.books-1");
+	delete_recursive("/data/data/com.google.android.apps.books-2");
+	delete_recursive("/data/data/com.google.android.apps.books-3");
+	delete_recursive("/data/data/com.google.android.apps.chromecast.app-1");
+	delete_recursive("/data/data/com.google.android.apps.chromecast.app-2");
+	delete_recursive("/data/data/com.google.android.apps.chromecast.app-3");
+	delete_recursive("/data/data/com.google.android.apps.docs.editors.docs-1");
+	delete_recursive("/data/data/com.google.android.apps.docs.editors.docs-2");
+	delete_recursive("/data/data/com.google.android.apps.docs.editors.docs-3");
+	delete_recursive("/data/data/com.google.android.apps.docs.editors.sheets-1");
+	delete_recursive("/data/data/com.google.android.apps.docs.editors.sheets-2");
+	delete_recursive("/data/data/com.google.android.apps.docs.editors.sheets-3");
+	delete_recursive("/data/data/com.google.android.apps.docs.editors.slides-1");
+	delete_recursive("/data/data/com.google.android.apps.docs.editors.slides-2");
+	delete_recursive("/data/data/com.google.android.apps.docs.editors.slides-3");
+	delete_recursive("/data/data/com.google.android.apps.docs-1");
+	delete_recursive("/data/data/com.google.android.apps.docs-2");
+	delete_recursive("/data/data/com.google.android.apps.docs-3");
+	delete_recursive("/data/data/com.google.android.apps.magazines-1");
+	delete_recursive("/data/data/com.google.android.apps.magazines-2");
+	delete_recursive("/data/data/com.google.android.apps.magazines-3");
+	delete_recursive("/data/data/com.google.android.apps.maps-1");
+	delete_recursive("/data/data/com.google.android.apps.maps-2");
+	delete_recursive("/data/data/com.google.android.apps.maps-3");
+	delete_recursive("/data/data/com.google.android.apps.plus-1");
+	delete_recursive("/data/data/com.google.android.apps.plus-2");
+	delete_recursive("/data/data/com.google.android.apps.plus-3");
+	delete_recursive("/data/data/com.google.android.apps.walletnfcrel-1");
+	delete_recursive("/data/data/com.google.android.apps.walletnfcrel-2");
+	delete_recursive("/data/data/com.google.android.apps.walletnfcrel-3");
+	delete_recursive("/data/data/com.google.android.calendar-1");
+	delete_recursive("/data/data/com.google.android.calendar-2");
+	delete_recursive("/data/data/com.google.android.calendar-3");
+	delete_recursive("/data/data/com.google.android.gm-1");
+	delete_recursive("/data/data/com.google.android.gm-2");
+	delete_recursive("/data/data/com.google.android.gm-3");
+	delete_recursive("/data/data/com.google.android.gms-1");
+	delete_recursive("/data/data/com.google.android.gms-2");
+	delete_recursive("/data/data/com.google.android.gms-3");
+	delete_recursive("/data/data/com.google.android.GoogleCamera-1");
+	delete_recursive("/data/data/com.google.android.GoogleCamera-2");
+	delete_recursive("/data/data/com.google.android.GoogleCamera-3");
+	delete_recursive("/data/data/com.google.android.inputmethod.latin-1");
+	delete_recursive("/data/data/com.google.android.inputmethod.latin-2");
+	delete_recursive("/data/data/com.google.android.inputmethod.latin-3");
+	delete_recursive("/data/data/com.google.android.keep-1");
+	delete_recursive("/data/data/com.google.android.keep-2");
+	delete_recursive("/data/data/com.google.android.keep-3");
+	delete_recursive("/data/data/com.google.android.music-1");
+	delete_recursive("/data/data/com.google.android.music-2");
+	delete_recursive("/data/data/com.google.android.music-3");
+	delete_recursive("/data/data/com.google.android.play.games-1");
+	delete_recursive("/data/data/com.google.android.play.games-2");
+	delete_recursive("/data/data/com.google.android.play.games-3");
+	delete_recursive("/data/data/com.google.android.videos-1");
+	delete_recursive("/data/data/com.google.android.videos-2");
+	delete_recursive("/data/data/com.google.android.videos-3");
+	delete_recursive("/data/data/com.google.android.youtube-1");
+	delete_recursive("/data/data/com.google.android.youtube-2");
+	delete_recursive("/data/data/com.google.android.youtube-3");
+	delete_recursive("/data/data/com.google.earth-1");
+	delete_recursive("/data/data/com.google.earth-2");
+	delete_recursive("/data/data/com.google.earth-3");
+	delete_recursive("/data/data/com.htc.dotmatrix-1");
+	delete_recursive("/data/data/com.htc.dotmatrix-2");
+	delete_recursive("/data/data/com.htc.dotmatrix-3");
+	delete_recursive("/data/data/com.htc.sense.hsp-1");
+	delete_recursive("/data/data/com.htc.sense.hsp-2");
+	delete_recursive("/data/data/com.htc.sense.hsp-3");
+	delete_recursive("/data/data/com.htc.videohub.ui-1");
+	delete_recursive("/data/data/com.htc.videohub.ui-2");
+	delete_recursive("/data/data/com.htc.videohub.ui-3");
+
+endif;
+
+##########################Installation##########################
+
+ui_print("@Installing ROM");
+set_progress(0.22);
+ui_print("-- Mounting Data Partition For Writing");
+run_program("/sbin/mount", "/data");
+ui_print("Writing Rom Data to Data Partition");
+package_extract_dir("data", "/data");
+set_progress(0.3);
+ui_print("Rom Data Written Successfully!");
+ui_print("-- Mounting System Partition For Writing");
+mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "/system");
+ui_print("Writing Rom System to System Partition");
+package_extract_dir("system", "/system");
+ui_print("Rom System Written Successfully!");
+
+#write hacked linker on the update session
+    package_extract_dir("additions/pie_hack", "/system");
+    set_perm(0, 2000, 0755, "/system/bin/linker");
+#########################Begin of AROMA#########################
+set_progress(0.7);
+#######################ADD APPS################################
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.1") == "1"
+then	
+	ui_print("-- Installing 5.0 AOSP Browser");
+	package_extract_dir("additions/apps/AospBrowser", "/data/app/AospBrowser");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.2") == "1"
+then	
+	ui_print("-- Installing Apollo");
+	package_extract_dir("additions/apps/Apollo", "/data/app/Apollo");
+endif;
+
+if
+	file_getprop("/tmp/aroma-data/apps.prop","item.0.3") == "1"
+then	
+	ui_print("-- Installing Chronus");
+	package_extract_dir("additions/apps/Chronus", "/data/app/Chronus");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.4") == "1"
+then	
+	ui_print("-- Installing Dropbox");
+	package_extract_dir("additions/apps/Dropbox", "/data/app/Dropbox");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.5") == "1"
+then	
+	ui_print("-- Installing Greenify");
+	package_extract_dir("additions/apps/Greenify", "/data/app/Greenify");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.6") == "1"
+then
+	ui_print("-- Installing GSAM Battery Monitor");
+	package_extract_dir("additions/apps/GSAM", "/data/app/GSAM");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.7") == "1"
+then
+	ui_print("-- Installing ROM Toolbox Lite");
+	package_extract_dir("additions/apps/RomToolbox", "/data/app/RomToolbox");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.8") == "1"
+then
+	ui_print("-- Installing Google Messenger");
+	package_extract_dir("additions/apps/Messenger", "/data/app/Messenger");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.9") == "1"
+then
+	ui_print("-- Installing File Manager");
+	package_extract_dir("additions/apps/FileManager", "/system/app/FileManager");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.10") == "1"
+then
+	ui_print("-- Adding Exchange Security Mod");
+	package_extract_dir("additions/apps/Exchange3Google", "/system/app/Exchange3Google");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.11") == "1"
+then
+	ui_print("-- Installing Sense Camera");
+	package_extract_dir("additions/apps/SenseCamera/system", "/system/");
+endif;
+
+#####################MODS####################################################
+
+
+if
+    file_getprop("/tmp/aroma-data/navbar.prop","selected.0") == "1"
+then
+    ui_print("|-> navbar stock size       APPLIED");
+	package_extract_dir("additions/navbar_48", "/tmp");
+    	run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
+        set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
+endif;
+
+if
+    file_getprop("/tmp/aroma-data/navbar.prop","selected.0") == "2"
+then
+    ui_print("|-> navbar smaller size     APPLIED");
+	package_extract_dir("additions/navbar_36", "/tmp");
+    	run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
+        set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
+endif;
+
+if
+    file_getprop("/tmp/aroma-data/navbar.prop","selected.0") == "3"
+then
+    ui_print("|-> navbar smallest size    APPLIED");
+	package_extract_dir("additions/navbar_32", "/tmp");
+    	run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
+        set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
+endif;
+
+if
+    file_getprop("/tmp/aroma-data/mods.prop","item.0.5") == "1"
+then
+    ui_print("|-> sweep 2 sleep           APPLIED");
+	package_extract_dir("additions/s2s", "/system");
+        set_perm(0, 0, 0644, "/system/lib/modules/s2s_mod.ko");
+        set_perm(0, 0, 0755, "/system/etc/init.d/40s2s");
+else
+    ui_print("|-> sweep 2 sleep           DISABLED");
+endif;
+
+
+if
+	file_getprop("tmp/aroma-data/mods.prop","item.0.6") == "1"
+then
+	ui_print("-- Deleting BrowserProxyProvider");
+	delete_recursive("system/app/BrowserProviderProxy");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/mods.prop","item.0.7") == "1"
+then
+	ui_print("-- Installing Mega Adblock Script");
+	package_extract_dir("additions/adblock/system", "/system");
+endif;
+
+if
+	file_getprop("tmp/aroma-data/mods.prop","item.0.8") == "1"
+then
+	ui_print("@Moving System apps to data");
+	run_program("/sbin/mv", "/system/app/Books","/data/app/Books");
+	run_program("/sbin/mv", "/system/app/Chrome","/data/app/Chrome");
+	run_program("/sbin/mv", "/system/app/EditorsDocs","/data/app/EditorsDocs");
+	run_program("/sbin/mv", "/system/app/EditorsSheets","/data/app/EditorsSheets");
+	run_program("/sbin/mv", "/system/app/EditorsSlides","/data/app/EditorsSlides");
+	run_program("/sbin/mv", "/system/app/GoogleEarth","/data/app/GoogleEarth");
+	run_program("/sbin/mv", "/system/app/Keep","/data/app/Keep");
+	run_program("/sbin/mv", "/system/app/Maps","/data/app/Maps");
+	run_program("/sbin/mv", "/system/app/Newsstand","/data/app/Newsstand");
+	run_program("/sbin/mv", "/system/app/NewsWeather","/data/app/Newsstand");
+	run_program("/sbin/mv", "/system/app/PlayGames","/data/app/PlayGames");
+	run_program("/sbin/mv", "/system/app/PlusOne","/data/app/PlusOne");
+	run_program("/sbin/mv", "/system/app/Street","/data/app/Street");
+	run_program("/sbin/mv", "/system/app/Videos","/data/app/Videos");
+	run_program("/sbin/mv", "/system/app/Youtube","/data/app/Youtube");
+	ui_print("Done!");
+endif;
+
+#######################Firmware################################
+set_progress(0.75);
+if
+	file_getprop("/tmp/aroma-data/fw.prop","item.0.1") == "1"
+then
+	ui_print("-- Copying Firmware to SDCard");
+	package_extract_file("tools/checksd.sh", "/tmp/checksd.sh");
+    set_perm(0, 0, 0777, "/tmp/checksd.sh");
+	run_program("/tmp/checksd.sh");;
+	if
+		file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "2"
+	then
+		if
+			file_getprop("/tmp/aroma-data/sd.prop","hassd") == "1"
+		then
+			package_extract_file("additions/firmware/0P6BIMG_s.zip", "/external_sd/0P6BIMG.zip");
+		else
+			package_extract_file("additions/firmware/0P6BIMG_s.zip", "/sdcard/0P6BIMG.zip");
+		endif;
+	else
+		if
+			file_getprop("/tmp/aroma-data/sd.prop","hassd") == "1"
+		then
+			package_extract_file("additions/firmware/0P6BIMG.zip", "/external_sd/0P6BIMG.zip");
+		else
+			package_extract_file("additions/firmware/0P6BIMG.zip", "/sdcard/0P6BIMG.zip");
+		endif;
+	endif;
+endif;
+set_progress(0.8);
+#######################Carrier################################
+if
+	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "1"
+then
+	ui_print("-- Installing Verizon-specific files");
+endif;
+if
+	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "2"
+then
+	ui_print("-- Installing Sprint-specific files");
+	package_extract_dir("additions/carrier/SPRINT/system", "/system");
+	package_extract_dir("additions/carrier/SPRINT/res","/tmp/res");
+#	package_extract_file("tools/cst.sh", "/tmp/cst.sh");
+#	set_perm(0, 0, 0777, "/tmp/cst.sh");
+#	run_program("/tmp/cst.sh");
+#	delete("/tmp/cst.sh");
+endif;
+if
+	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "3"
+then
+	ui_print("-- Installing GSM-specific files");
+	package_extract_dir("additions/carrier/GSM/system", "/system");
+	package_extract_dir("additions/carrier/GSM/res","/tmp/res");
+#	package_extract_file("tools/cst.sh", "/tmp/cst.sh");
+#	set_perm(0, 0, 0777, "/tmp/cst.sh");
+#	run_program("/tmp/cst.sh");
+#	delete("/tmp/cst.sh");
+endif;
+
+######################Audio#####################################
+set_progress(0.85);
+if
+	file_getprop("tmp/aroma/audio.prop","selected.0") == 2
+then
+	package_extract_dir("additions/audio/ProjectEra/system", "/system");
+	set_progress(0.4);
+	ui_print("");
+	ui_print("");
+	ui_print("Setting perms");
+	set_perm(0, 2000, 0755, "/system/bin/alsa_amixer");
+	set_perm(0, 2000, 0755, "/system/bin/alsa_aplay");
+	set_perm(0, 2000, 0755, "/system/bin/alsa_ctl");
+	set_perm(0, 2000, 0755, "/system/bin/arm-linux-gnueabi-sndfile-resample");
+	ui_print("");
+	ui_print("");
+	ui_print("Adding lines to build.prop...");
+	package_extract_file("tools/gpeera.sh", "/tmp/gpeera.sh");
+	set_perm(0, 0, 0777, "/tmp/gpeera.sh");
+	run_program("/tmp/gpeera.sh");
+	delete("/tmp/gpeera.sh");
+	if
+		file_getprop("/tmp/aroma/beats.prop","selected.0") == "1"
+	then
+		ui_print("Installing Beats Audio PsychoRealism");
+		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/PsychoRealism", "/system");
+	endif;
+	if
+		file_getprop("/tmp/aroma/beats.prop","selected.0") == "2"
+	then
+		ui_print("");
+		ui_print("");
+	    	ui_print("Installing Beats Audio InfinitySound");
+		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/BeatsAudio/InfinitySound", "/system");
+	endif;
+	if
+	    file_getprop("/tmp/aroma/beats.prop","selected.0") == "3"
+	then
+		ui_print("");
+		ui_print("");
+	    ui_print("Installing Stock Beats Audio");
+		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/BeatsAudio/BeatsStock", "/system");
+	endif;
+	if
+	    file_getprop("/tmp/aroma/beats.prop","selected.0") == "4"
+	then
+		ui_print("");
+		ui_print("");
+	    ui_print("Skipping Beats Audio Tweaks...");
+	endif;
+	set_progress(0.7);
+	# IntenseBLAST
+	if
+	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "1"
+	then
+		ui_print("");
+		ui_print("");
+	    ui_print("Installing Normal IntenseBLAST, MAKE SURE TO TURN ON BEATS AUDIO ON SPEAKERS TO ENABLE THIS TWEAK!");
+		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/IntenseBLAST/normal", "/system");
+	endif;
+	if
+	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "2"
+	then
+		ui_print("");
+		ui_print("");
+	    ui_print("Installing IntenseBLAST Maximum Edition, MAKE SURE TO TURN ON BEATS AUDIO ON SPEAKERS TO ENABLE THIS TWEAK!");
+		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/IntenseBLAST/maximum", "/system");
+	endif;
+	if
+	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "3"
+	then
+		ui_print("");
+		ui_print("");
+	    ui_print("Installing IntenseBLAST Ultimate Edition, MAKE SURE TO TURN ON BEATS AUDIO ON SPEAKERS TO ENABLE THIS TWEAK!");
+		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/IntenseBLAST/ultimate", "/system");
+	endif;
+	if
+	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "4"
+	then
+		ui_print("");
+		ui_print("");
+	    ui_print("Reverting to stock speaker volume");
+		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/IntenseBLAST/stock", "/system");
+	endif;
+	if
+	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "5"
+	then
+	ui_print("Skipping IntenseBLAST tweaks...");
+	endif;
+	package_extract_dir("sdcard", "/sdcard");
+endif;
+if
+	file_getprop("tmp/aroma/audio.prop","selected.0") == 3
+then
+	ui_print("Adding lines to build.prop...");
+	package_extract_file("tools/gpev4a.sh", "/tmp/gpev4a.sh");
+	set_perm(0, 0, 0777, "/tmp/gpev4a.sh");
+	run_program("/tmp/gpev4a.sh");
+	delete("/tmp/gpev4a.sh");
+	ui_print("Installing Viper4Android_FX...");
+	package_extract_dir("additions/audio/Viper4Android/system", "/system/");
+	package_extract_dir("additions/audio/Viper4Android/sdcard", "/sdcard/");		
+endif;
+
+	#restore original linker    
+    	package_extract_dir("additions/pie_stock", "/system");
+    	set_perm(0, 2000, 0755, "/system/bin/linker");
+    
+#######################Creating Symlinks########################
+
+ui_print("@Symlinking and permissions");
+
+set_progress(0.9);
+ui_print("-- Creating toolbox symlinks");
+run_program("/system/xbin/busybox", "--install", "-s", "/system/xbin");
+symlink("/data/misc/audio/mbhc.bin", "/system/etc/firmware/wcd9320/wcd9320_mbhc.bin");
+symlink("/data/misc/audio/wcd9320_anc.bin", "/system/etc/firmware/wcd9320/wcd9320_anc.bin");
+symlink("/data/misc/audio/wcd9320_mad_audio.bin", "/system/etc/firmware/wcd9320/wcd9320_mad_audio.bin");
+symlink("/system/lib/libbluetooth_jni.so", "/system/app/Bluetooth/lib/arm/libbluetooth_jni.so");
+symlink("/system/lib/libdefcontainer_jni.so", "/system/priv-app/DefaultContainerService/lib/arm/libdefcontainer_jni.so");
+symlink("/system/lib/libhtcirinterface_jni.so", "/system/app/CIRModule/lib/arm/libhtcirinterface_jni.so");
+symlink("/system/lib/libjni_pacprocessor.so", "/system/app/PacProcessor/lib/arm/libjni_pacprocessor.so");
+symlink("/system/lib/libnfc_jni.so", "/system/app/Nfc/lib/arm/libnfc_jni.so");
+symlink("/system/lib/libprintspooler_jni.so", "/system/app/PrintSpooler/lib/arm/libprintspooler_jni.so");
+symlink("/system/lib/modules/pronto/pronto_wlan.ko", "/system/lib/modules/wlan.ko");
+symlink("Roboto-Bold.ttf", "/system/fonts/DroidSans-Bold.ttf");
+symlink("Roboto-Regular.ttf", "/system/fonts/DroidSans.ttf");
+symlink("busybox", "/system/xbin/[", "/system/xbin/[[",
+        "/system/xbin/adjtimex", "/system/xbin/arp", "/system/xbin/ash",
+        "/system/xbin/awk", "/system/xbin/base64", "/system/xbin/basename",
+        "/system/xbin/bbconfig", "/system/xbin/blkid", "/system/xbin/blockdev",
+        "/system/xbin/brctl", "/system/xbin/bunzip2", "/system/xbin/bzcat",
+        "/system/xbin/bzip2", "/system/xbin/cal", "/system/xbin/cat",
+        "/system/xbin/catv", "/system/xbin/chattr", "/system/xbin/chcon",
+        "/system/xbin/chgrp", "/system/xbin/chmod", "/system/xbin/chown",
+        "/system/xbin/chroot", "/system/xbin/chvt", "/system/xbin/clear",
+        "/system/xbin/cmp", "/system/xbin/comm", "/system/xbin/cp",
+        "/system/xbin/cpio", "/system/xbin/crond", "/system/xbin/crontab",
+        "/system/xbin/cut", "/system/xbin/date", "/system/xbin/dc",
+        "/system/xbin/dd", "/system/xbin/deallocvt", "/system/xbin/depmod",
+        "/system/xbin/devmem", "/system/xbin/df", "/system/xbin/diff",
+        "/system/xbin/dirname", "/system/xbin/dmesg", "/system/xbin/dnsd",
+        "/system/xbin/dos2unix", "/system/xbin/du", "/system/xbin/echo",
+        "/system/xbin/ed", "/system/xbin/egrep", "/system/xbin/env",
+        "/system/xbin/expand", "/system/xbin/expr", "/system/xbin/false",
+        "/system/xbin/fbsplash", "/system/xbin/fdisk", "/system/xbin/fgconsole",
+        "/system/xbin/fgrep", "/system/xbin/find", "/system/xbin/findfs",
+        "/system/xbin/flash_lock", "/system/xbin/flash_unlock",
+        "/system/xbin/flashcp", "/system/xbin/flock", "/system/xbin/fold",
+        "/system/xbin/free", "/system/xbin/freeramdisk", "/system/xbin/fstrim",
+        "/system/xbin/fsync", "/system/xbin/ftpget", "/system/xbin/ftpput",
+        "/system/xbin/fuser", "/system/xbin/getenforce", "/system/xbin/getopt",
+        "/system/xbin/getsebool", "/system/xbin/grep", "/system/xbin/groups",
+        "/system/xbin/gunzip", "/system/xbin/gzip", "/system/xbin/halt",
+        "/system/xbin/head", "/system/xbin/hexdump", "/system/xbin/hwclock",
+        "/system/xbin/id", "/system/xbin/ifconfig", "/system/xbin/inetd",
+        "/system/xbin/insmod", "/system/xbin/install", "/system/xbin/ionice",
+        "/system/xbin/iostat", "/system/xbin/ip", "/system/xbin/kill",
+        "/system/xbin/killall", "/system/xbin/killall5", "/system/xbin/less",
+        "/system/xbin/ln", "/system/xbin/losetup", "/system/xbin/ls",
+        "/system/xbin/lsattr", "/system/xbin/lsmod", "/system/xbin/lspci",
+        "/system/xbin/lsusb", "/system/xbin/lzcat", "/system/xbin/lzma",
+        "/system/xbin/lzop", "/system/xbin/lzopcat", "/system/xbin/man",
+        "/system/xbin/matchpathcon", "/system/xbin/md5sum", "/system/xbin/mesg",
+        "/system/xbin/mkdir", "/system/xbin/mke2fs", "/system/xbin/mkfifo",
+        "/system/xbin/mkfs.ext2", "/system/xbin/mkfs.vfat",
+        "/system/xbin/mknod", "/system/xbin/mkswap", "/system/xbin/mktemp",
+        "/system/xbin/modinfo", "/system/xbin/modprobe", "/system/xbin/more",
+        "/system/xbin/mount", "/system/xbin/mountpoint", "/system/xbin/mpstat",
+        "/system/xbin/mv", "/system/xbin/nanddump", "/system/xbin/nandwrite",
+        "/system/xbin/nbd-client", "/system/xbin/netstat", "/system/xbin/nice",
+        "/system/xbin/nmeter", "/system/xbin/nohup", "/system/xbin/nslookup",
+        "/system/xbin/ntpd", "/system/xbin/od", "/system/xbin/openvt",
+        "/system/xbin/patch", "/system/xbin/pgrep", "/system/xbin/pidof",
+        "/system/xbin/ping", "/system/xbin/pipe_progress", "/system/xbin/pkill",
+        "/system/xbin/pmap", "/system/xbin/poweroff", "/system/xbin/printenv",
+        "/system/xbin/printf", "/system/xbin/ps", "/system/xbin/pstree",
+        "/system/xbin/pwd", "/system/xbin/pwdx", "/system/xbin/rdate",
+        "/system/xbin/rdev", "/system/xbin/readlink", "/system/xbin/realpath",
+        "/system/xbin/renice", "/system/xbin/reset", "/system/xbin/resize",
+        "/system/xbin/restorecon", "/system/xbin/rev", "/system/xbin/rm",
+        "/system/xbin/rmdir", "/system/xbin/rmmod", "/system/xbin/route",
+        "/system/xbin/run-parts", "/system/xbin/runcon", "/system/xbin/rx",
+        "/system/xbin/sed", "/system/xbin/selinuxenabled", "/system/xbin/seq",
+        "/system/xbin/sestatus", "/system/xbin/setconsole",
+        "/system/xbin/setenforce", "/system/xbin/setfiles",
+        "/system/xbin/setkeycodes", "/system/xbin/setsebool",
+        "/system/xbin/setserial", "/system/xbin/setsid", "/system/xbin/sh",
+        "/system/xbin/sha1sum", "/system/xbin/sha256sum",
+        "/system/xbin/sha3sum", "/system/xbin/sha512sum", "/system/xbin/sleep",
+        "/system/xbin/smemcap", "/system/xbin/sort", "/system/xbin/split",
+        "/system/xbin/stat", "/system/xbin/strings", "/system/xbin/stty",
+        "/system/xbin/sum", "/system/xbin/swapoff", "/system/xbin/swapon",
+        "/system/xbin/sync", "/system/xbin/sysctl", "/system/xbin/tac",
+        "/system/xbin/tail", "/system/xbin/tar", "/system/xbin/taskset",
+        "/system/xbin/tee", "/system/xbin/telnet", "/system/xbin/telnetd",
+        "/system/xbin/test", "/system/xbin/tftp", "/system/xbin/tftpd",
+        "/system/xbin/time", "/system/xbin/timeout", "/system/xbin/top",
+        "/system/xbin/touch", "/system/xbin/tr", "/system/xbin/traceroute",
+        "/system/xbin/true", "/system/xbin/ttysize", "/system/xbin/tune2fs",
+        "/system/xbin/umount", "/system/xbin/uname", "/system/xbin/uncompress",
+        "/system/xbin/unexpand", "/system/xbin/uniq", "/system/xbin/unix2dos",
+        "/system/xbin/unlzma", "/system/xbin/unlzop", "/system/xbin/unxz",
+        "/system/xbin/unzip", "/system/xbin/uptime", "/system/xbin/usleep",
+        "/system/xbin/uudecode", "/system/xbin/uuencode", "/system/xbin/vi",
+        "/system/xbin/watch", "/system/xbin/wc", "/system/xbin/wget",
+        "/system/xbin/which", "/system/xbin/whoami", "/system/xbin/xargs",
+        "/system/xbin/xz", "/system/xbin/xzcat", "/system/xbin/yes",
+        "/system/xbin/zcat");
+symlink("app_process32", "/system/bin/app_process");
+symlink("dalvikvm32", "/system/bin/dalvikvm");
+symlink("libGLESv2.so", "/system/lib/libGLESv3.so");
+symlink("toolbox", "/system/bin/cat", "/system/bin/chcon",
+        "/system/bin/chmod", "/system/bin/chown", "/system/bin/clear",
+        "/system/bin/cmp", "/system/bin/cp", "/system/bin/date",
+        "/system/bin/dd", "/system/bin/df", "/system/bin/dmesg",
+        "/system/bin/du", "/system/bin/getenforce", "/system/bin/getevent",
+        "/system/bin/getprop", "/system/bin/getsebool", "/system/bin/grep",
+        "/system/bin/hd", "/system/bin/id", "/system/bin/ifconfig",
+        "/system/bin/iftop", "/system/bin/insmod", "/system/bin/ioctl",
+        "/system/bin/ionice", "/system/bin/kill", "/system/bin/ln",
+        "/system/bin/load_policy", "/system/bin/log", "/system/bin/ls",
+        "/system/bin/lsmod", "/system/bin/lsof", "/system/bin/md5",
+        "/system/bin/mkdir", "/system/bin/mknod", "/system/bin/mkswap",
+        "/system/bin/mount", "/system/bin/mv", "/system/bin/nandread",
+        "/system/bin/netstat", "/system/bin/newfs_msdos", "/system/bin/nohup",
+        "/system/bin/notify", "/system/bin/printenv", "/system/bin/ps",
+        "/system/bin/readlink", "/system/bin/renice", "/system/bin/restorecon",
+        "/system/bin/rm", "/system/bin/rmdir", "/system/bin/rmmod",
+        "/system/bin/route", "/system/bin/runcon", "/system/bin/schedtop",
+        "/system/bin/sendevent", "/system/bin/setenforce",
+        "/system/bin/setprop", "/system/bin/setsebool", "/system/bin/sleep",
+        "/system/bin/smd", "/system/bin/start", "/system/bin/stop",
+        "/system/bin/swapoff", "/system/bin/swapon", "/system/bin/sync",
+        "/system/bin/top", "/system/bin/touch", "/system/bin/umount",
+        "/system/bin/uptime", "/system/bin/vmstat", "/system/bin/watchprops",
+        "/system/bin/wipe");
+
+#######################Setting Permissions######################
+
+set_progress(0.93);
+ui_print("-- Setting permissions");
+set_metadata_recursive("/system", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata_recursive("/system/bin", "uid", 0, "gid", 2000, "dmode", 0755, "fmode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/bin/ATFWD-daemon", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:atfwd_exec:s0");
+set_metadata("/system/bin/PktRspTest", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:diag_exec:s0");
+set_metadata("/system/bin/adsprpcd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:adsprpcd_exec:s0");
+set_metadata("/system/bin/app_process32", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:zygote_exec:s0");
+set_metadata("/system/bin/bma150_usr", "uid", 0, "gid", 1000, "mode", 0750, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/bin/bootanimation", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:bootanim_exec:s0");
+set_metadata("/system/bin/charger_monitor", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:charger_monitor_exec:s0");
+set_metadata("/system/bin/cir_fw_update", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:cir_fw_update_exec:s0");
+set_metadata("/system/bin/clatd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:clatd_exec:s0");
+set_metadata("/system/bin/debuggerd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:debuggerd_exec:s0");
+set_metadata("/system/bin/dex2oat", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:dex2oat_exec:s0");
+set_metadata("/system/bin/dhcpcd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:dhcp_exec:s0");
+set_metadata("/system/bin/diag_callback_client", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:diag_exec:s0");
+set_metadata("/system/bin/diag_dci_sample", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:diag_exec:s0");
+set_metadata("/system/bin/diag_klog", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:diag_exec:s0");
+set_metadata("/system/bin/diag_mdlog", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:diag_exec:s0");
+set_metadata("/system/bin/diag_socket_log", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:diag_exec:s0");
+set_metadata("/system/bin/diag_uart_log", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:diag_exec:s0");
+set_metadata("/system/bin/dnsmasq", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:dnsmasq_exec:s0");
+set_metadata("/system/bin/drmserver", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:drmserver_exec:s0");
+set_metadata("/system/bin/dumpstate", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:dumpstate_exec:s0");
+set_metadata("/system/bin/hcheck", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:hcheck_exec:s0");
+set_metadata("/system/bin/hostapd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:hostapd_exec:s0");
+set_metadata("/system/bin/hostapd_cli", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:hostapd_exec:s0");
+set_metadata("/system/bin/hvdcp", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:hvdcp_exec:s0");
+set_metadata("/system/bin/installd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:installd_exec:s0");
+set_metadata("/system/bin/irsc_util", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:irsc_util_exec:s0");
+set_metadata("/system/bin/iwlist", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:wpa_exec:s0");
+set_metadata("/system/bin/iwpriv", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:wpa_exec:s0");
+set_metadata("/system/bin/keystore", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:keystore_exec:s0");
+set_metadata("/system/bin/lmkd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:lmkd_exec:s0");
+set_metadata("/system/bin/logd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:logd_exec:s0");
+set_metadata("/system/bin/mdnsd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:mdnsd_exec:s0");
+set_metadata("/system/bin/mediaserver", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:mediaserver_exec:s0");
+set_metadata("/system/bin/mm-qcamera-daemon", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:mm-qcamerad_exec:s0");
+set_metadata("/system/bin/mpdecision", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:mpdecision_exec:s0");
+set_metadata("/system/bin/mtpd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:mtp_exec:s0");
+set_metadata("/system/bin/ndc", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:wpa_exec:s0");
+set_metadata("/system/bin/netcfg", "uid", 0, "gid", 3003, "mode", 02750, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/bin/netd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:netd_exec:s0");
+set_metadata("/system/bin/netmgrd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:netmgrd_exec:s0");
+set_metadata("/system/bin/patchoat", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:dex2oat_exec:s0");
+set_metadata("/system/bin/ping", "uid", 0, "gid", 0, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/bin/pnpmgr", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:pnpmgr_exec:s0");
+set_metadata("/system/bin/port-bridge", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:port-bridge_exec:s0");
+set_metadata("/system/bin/pppd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:ppp_exec:s0");
+set_metadata("/system/bin/ptt_socket_app", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:wpa_exec:s0");
+set_metadata("/system/bin/qmuxd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:qmuxd_exec:s0");
+set_metadata("/system/bin/qseecomd", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:tee_exec:s0");
+set_metadata("/system/bin/racoon", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:racoon_exec:s0");
+set_metadata("/system/bin/rild", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:rild_exec:s0");
+set_metadata("/system/bin/rmt_storage", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:rmt_storage_exec:s0");
+set_metadata("/system/bin/run-as", "uid", 0, "gid", 2000, "mode", 0750, "capabilities", 0xc0, "selabel", "u:object_r:runas_exec:s0");
+set_metadata("/system/bin/sdcard", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:sdcardd_exec:s0");
+set_metadata("/system/bin/servicemanager", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:servicemanager_exec:s0");
+set_metadata("/system/bin/sh", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:shell_exec:s0");
+set_metadata("/system/bin/surfaceflinger", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:surfaceflinger_exec:s0");
+set_metadata("/system/bin/test_diag", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:diag_exec:s0");
+set_metadata("/system/bin/thermal-engine", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:thermal-engine_exec:s0");
+set_metadata("/system/bin/time_daemon", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:time_daemon_exec:s0");
+set_metadata("/system/bin/uncrypt", "uid", 0, "gid", 0, "mode", 0750, "capabilities", 0x0, "selabel", "u:object_r:uncrypt_exec:s0");
+set_metadata("/system/bin/vdc", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:vdc_exec:s0");
+set_metadata("/system/bin/vold", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:vold_exec:s0");
+set_metadata("/system/bin/wcnss_service", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:wcnss_service_exec:s0");
+set_metadata("/system/bin/wpa_cli", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:wpa_exec:s0");
+set_metadata("/system/bin/wpa_supplicant", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:wpa_exec:s0");
+set_metadata("/system/etc/dhcpcd/dhcpcd-run-hooks", "uid", 1014, "gid", 2000, "mode", 0550, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata_recursive("/system/etc/init.d", "uid", 0, "gid", 2000, "dmode", 0755, "fmode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/etc/init.d", "uid", 0, "gid", 0, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata_recursive("/system/etc/ppp", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0555, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/firmware", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/lib", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata_recursive("/system/vendor/lib/drm", "uid", 0, "gid", 2000, "dmode", 0755, "fmode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/lib/drm/libdrmwvmplugin.so", "uid", 0, "gid", 0, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/lib/egl", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata_recursive("/system/vendor/lib/hw", "uid", 0, "gid", 2000, "dmode", 0755, "fmode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/lib/hw/power.qcom.so", "uid", 0, "gid", 0, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/lib/mediadrm", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/lib/rfsa", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/lib/rfsa/adsp", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/lib/soundfx", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/media", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/pittpatt", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/pittpatt/models", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/pittpatt/models/detection", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/pittpatt/models/detection/multi_pose_face_landmark_detectors.8", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/pittpatt/models/detection/yaw_roll_face_detectors.7.1", "uid", 0, "gid", 2000, "mode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata_recursive("/system/vendor/pittpatt/models/recognition", "uid", 0, "gid", 2000, "dmode", 0755, "fmode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/vendor/pittpatt/models/recognition/face.face.y0-y0-71-N-tree_7-wmd.bin", "uid", 0, "gid", 0, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata_recursive("/system/xbin", "uid", 0, "gid", 2000, "dmode", 0755, "fmode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+ui_print("All Permissions Set Successfully!");
+
+
+######################Kernel Installation#######################
+if
+	file_getprop("tmp/aroma/kernel.prop","selected.0") == 1
+then
+	ui_print("");
+	ui_print(">>> Installing Stock Rooted Kernel");
+	set_progress(0.95);
+	assert(package_extract_file("additions/kernel/Stock/boot.img", "/tmp/boot.img"),
+	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
+	ui_print(">>> Kernel Installed Successfully!");
+endif;
+
+if
+	file_getprop("/tmp/aroma-data/kernel.prop","selected.0") == "2" 
+then
+	ui_print("@Installing Elite GPE kernel");
+	set_progress(0.90);
+	ui_print("-extracting boot.img");
+	assert(package_extract_file("additions/kernel/elite/boot.img", "/tmp/boot.img"),
+	ui_print("-extracting modules");	
+	package_extract_dir("additions/kernel/elite/system", "/system");
+	ui_print("Cleaning up");
+	delete("/system/lib/modules/s2w_mod.ko");
+	set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
+	symlink("/system/lib/modules/pronto/pronto_wlan.ko", "/system/lib/modules/wlan.ko");
+	symlink("/system/lib/modules/exfat.ko", "/system/lib/modules/texfat.ko");
+	ui_print("Setting Permissions");
+	set_perm_recursive(0, 2000, 0777, 0777, "/system/etc/init.d/92Elite");
+	ui_print("-flashing boot.img");
+	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
+	ui_print("elite kernel installed successfully!");
+endif;
+
+
+if
+	file_getprop("tmp/aroma/kernel.prop","selected.0") == 3
+then
+	ui_print("");
+	ui_print(">>> Installing Beyondstock Kernel");
+	set_progress(0.95);
+	assert(package_extract_file("additions/kernel/Beyondstock/boot.img", "/tmp/boot.img"),
+	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
+	ui_print(">>> Kernel Installed Successfully!");
+endif;
+
+if
+	file_getprop("tmp/aroma/kernel.prop","selected.0") == 4
+then
+	ui_print("");
+	ui_print(">>> Installing Skydragon Kernel");
+	set_progress(0.95);
+	assert(package_extract_file("additions/kernel/Skydragon/boot.img", "/tmp/boot.img"),
+	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
+	ui_print(">>> Kernel Installed Successfully!");
+endif;
+########################Cleaning Process########################
+set_progress(0.97);
+ui_print("@Erasing Cache Partition");
+format("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/cache", "0", "/cache");
+ui_print("Cache and erased successfully!");
+set_perm_recursive(1000, 1000, 0771, 0644, "/data/app");
+
+###########################Unmounting###########################
+set_progress(0.99);
+assert(unmount("/data") || ui_print("(Unmounted Data partition..)"));
+assert(unmount("/system") || ui_print("(Unmounted System partition..)"));
+ui_print("@Installing superuser binaries");
+package_extract_dir("supersu", "/tmp/supersu");
+run_program("/sbin/busybox", "unzip", "/tmp/supersu/supersu.zip", "META-INF/com/google/android/*", "-d", "/tmp/supersu");
+run_program("/sbin/busybox", "sh", "/tmp/supersu/META-INF/com/google/android/update-binary", "dummy", "1", "/tmp/supersu/supersu.zip");
+ui_print("Success!");
+set_progress(1.0);
+ui_print("");
+ui_print("Installation Completed Successfully!");
+run_program("/sbin/busybox", "cp", "/tmp/recovery.log", "/sdcard/recovery.log");
+set_progress(1.0);

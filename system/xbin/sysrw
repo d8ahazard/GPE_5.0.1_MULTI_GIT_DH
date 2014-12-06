@@ -1,0 +1,2 @@
+#!/system/bin/sh
+busybox mount -o remount,rw -t auto /system

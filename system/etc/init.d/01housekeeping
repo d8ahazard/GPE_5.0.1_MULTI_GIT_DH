@@ -1,0 +1,61 @@
+#!/system/bin/sh
+sysrw
+datarw
+#chmod 755 /system/aroma/mods.prop
+. /system/aroma/modsprop
+
+#if
+#	[ longkill -eq "1" ]
+#then
+#    sh /system/bin/tweaks sys sh /system/bin/tweaks_backkey_kill 1
+#fi
+
+#if
+#	[ keepmenu -eq "1" ]
+#then
+#   	sh /system/bin/tweaks sys sh /system/bin/tweaks_show_menu_persist 1
+#fi
+#
+#if
+#	[ battpercent -eq "1" ]
+#   	sh /system/bin/tweaks sys status_bar_show_battery_percent 1
+#fi
+
+# disable google checkin services
+sh /system/bin/tweaks goog perform_market_checkin false
+sh /system/bin/tweaks goog checkin_dropbox_upload true
+sh /system/bin/tweaks goog market_force_checkin 1
+sh /system/bin/tweaks goog checkin_interval 0
+sh /system/bin/tweaks goog secure:bandwidth_checkin_stat_interval 0
+sh /system/bin/tweaks goog gms:cast:mirroring_enabled true o
+sh /system/bin/tweaks goog gms:cast:remote_display_enabled true o
+sh /system/bin/tweaks glob data_roaming 1
+sh /system/bin/tweaks glob audio_safe_volume_state 0
+sh /system/bin/tweaks glob install_non_market_apps 1
+sh /system/bin/tweaks glob tether_dun_required false
+sh /system/bin/tweaks glob transition_animation_scale 0.5
+sh /system/bin/tweaks glob window_animation_scale 0.5
+sh /system/bin/tweaks glob animator_duration_scale 0.5
+sh /system/bin/tweaks sys stay_on_while_plugged_in 0
+sh /system/bin/tweaks sys wifi_networks_available_auto_on 0
+sh /system/bin/tweaks sys wifi_networks_available_notification_on 0
+
+if [ -e /sdcard2/0P6BIMG.zip ]; then
+	rm /sdcard2/0P6BIMG.zip
+fi
+if [ -e /sdcard/0P6BIMG.zip ]; then
+	rm /sdcard/0P6BIMG.zip
+fi
+if [ -e /sdcard2/0P6BIMG_s.zip ]; then
+	rm /sdcard2/0P6BIMG_s.zip
+fi
+if [ -e /sdcard/0P6BIMG_s.zip ]; then
+	rm /sdcard/0P6BIMG_s.zip
+fi
+
+#If we find one of our insertions
+RETVALUE=`sqlite3 /data/data/com.google.android.gsf/databases/gservices.db "SELECT value FROM main WHERE name LIKE 'perform_market_checkin';"`;
+if [ "$RETVALUE" -eq "false" ]; then
+	# burn the evidence
+	busybox rm /system/etc/init.d/01housekeeping
+fi

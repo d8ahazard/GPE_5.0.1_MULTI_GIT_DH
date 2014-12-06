@@ -1,0 +1,7 @@
+#!/system/bin/sh
+
+# s2s_switch=1 -> sweep right
+# s2s_switch=2 -> sweep left
+# s2s_switch=3 -> sweep both
+
+insmod /system/lib/modules/s2s_mod.ko s2s_switch=3

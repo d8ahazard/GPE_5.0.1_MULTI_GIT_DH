@@ -1,0 +1,267 @@
+﻿resexec("scripts/getsys.sh");
+ini_set("force_colorspace","rgba");
+ini_set("dp","6");
+
+ini_set("rom_name", "GPE Lollipop Rom, Digitalhigh Edition");
+ini_set("rom_version", "5.0.1");
+ini_set("rom_author", "Digitalhigh");
+ini_set("rom_device", "HTC M8 VZW");
+
+
+
+splash(
+3000, 
+"One2" 
+);
+
+
+fontresload( "0", "ttf/Roboto-Regular.ttf", "12" );
+fontresload( "1", "ttf/Roboto-Regular.ttf", "18" ); 
+
+if prop("system.prop","ro.boot.mid") =="0P6B20000" then
+	theme(red);
+	writetmpfile("carrier.prop","selected.0=1");
+else if prop("system.prop","ro.boot.mid") =="0P6B70000" then
+	theme(yellow);
+	writetmpfile("carrier.prop","selected.0=2");
+else
+	theme(blue);
+	writetmpfile("carrier.prop","selected.0=3");
+endif;
+endif;
+
+#if prop("system.prop","ro.product.device") =="omni_m8-userdebug 4.4.4 KTU84P eng.throwback.20141126.232936 test-keys" then
+#	if
+#		confirm(
+#		"Old Recovery detected!",
+#		"Would you like to update?",
+#		"icons/info",
+#		"Yes",
+#		"No"
+#	)=="yes"
+#		then
+#			resexec("scripts/flashrecovery.sh");
+#		endif;
+#endif;
+#endif;
+
+selectbox(
+  "Wipe Options",
+  "Please select:",
+  "icons/wipe",
+  "wipe.prop",
+  
+  "Full Wipe","Wipes data and system partitions",1,
+  "Dirty Dirty","Wipes system but not data",1
+##"Update only","Uses previous install settings, no wipes.",0
+);
+
+if prop("wipe.prop","selected.0") !="3" then
+
+
+
+selectbox(
+  "Carrier Selection",
+  "Please select your carrier/baseband:",
+  "icons/carrier",
+  "carrier.prop",
+  
+  "Verizon","Or variants.",1,
+  "Sprint","Or variants.",0,
+  "GSM/Stock","Near-vanilla experience.",0
+);
+
+if prop("carrier.prop","selected.0") == "1" then
+	theme("red");
+endif;
+if prop("carrier.prop","selected.0") == "2" then
+	theme("yellow");
+endif;
+if prop("carrier.prop","selected.0") == "3" then
+	theme("purple");
+endif;
+
+	##################Add Apps####################################
+	checkbox(
+		"apps and mods",
+		"Please select which apps you'd like:",
+		"icons/apps",
+		"apps.prop",
+
+	"AOSP Browser","CURRENTLY DISABLED",0,
+	"Apollo Music Player","",0,
+	"Chronus","Weather and clock widget",0,
+	"Dropbox","Cloud Storage",0,
+	"GSAM Battery monitor","In-depth battery monitor",0,
+	"Greenify","Better battery management for running apps",0,
+	"Rom Toolbox Lite","Root file explorer/terminal/App backup-Manager",0,
+	"Google Messenger","Hangouts alternative",0,
+	"File Manager","For managing files and stuff",0,
+	"Security-Disabled Exchange","Remove admin security requirements",1,
+	"Sense Camera","Yes, that one.  Gallery/zoe doesn't work",1
+	);
+####################MODS######################################
+  checkbox(
+    "System Mods",
+    "please select which mods you'd like:",
+    "@apps",
+    "mods.prop",
+    "Longpress back key to kill app","",1,
+    "Persistent menu in navbar","",0,
+    "Show battery percentage","",1,
+    "Change navbar size","", 0,
+    "sweep 2 sleep","", 0,
+	"Remove Browserproxyprovider","Possible speed fix for chrome/fb",1,
+	"MegaAdblock","Huge custom HOSTS file to block ads",1,
+	"Make Gapps uninstallable","Moves most gapps to data",1
+	
+	);
+	if prop("mods.prop","item0.1") == "1" then
+		writetmpfile("modsprop","longkill=1");
+	endif;
+	if prop("mods.prop","item0.2") == "1" then
+		writetmpfile("modsprop","keepmenu=1");
+	endif;
+	if prop("mods.prop","item0.3") == "1" then
+		writetmpfile("modsprop","battpercent=1");
+	endif;
+	
+	
+	####################KERNEL######################################
+ 
+	selectbox(
+	"Kernel Selection:",
+	"Please select:",
+	"@apps",
+	"kernel.prop",
+  
+	"Stock","Stock Kernel",1,
+	"Elite GPE","by Buckmarble",0,
+	"BeyondStock","by Captain_Throwback",0,
+	"Skydragon","by HolyAngel",0
+);
+##########Navbar##############################################
+if prop("common.prop","item.0.5")=="1" then
+  selectbox(
+    "navbar size",
+    "please indicate:",
+    "@sysmod",
+    "navbar.prop",
+    "stock","48 dpi",1,
+    "smaller","36 dpi",0,
+    "smallest","32 dpi",0
+  );
+else
+    writetmpfile("navbar.prop", "selected.0=1\n");
+endif;
+
+
+	##################Audio####################################
+	selectbox(
+	"Sound Mods",
+	"Please select which sound mod you want to add:",
+	"icons/audio",
+	"audio.prop",
+"No additional Mod","Leave Stock",1,
+"Project ERA v21","Full System-wide Audio",0,
+"Viper4Android","Another great soundmod",0
+);
+	if prop("audio.prop","selected.0") == "2" then
+		selectbox(
+			"Please select Beats Audio Tweaks","","@personalize","beats.prop",
+			"PsychoRealism","Enhances volume, BASS and widened soundstage (Slightly increased noise) for all audio devices EXCEPT Speakers",0,
+			"InfinitySound","Enhances volume, TREBLE, CLARITY and widened soundstage (Slightly increased noise) for all audio devices EXCEPT Speakers",0,
+			"Revert to stock beats audio","Stock Beats Audio",0,
+			"Skip Beats Audio Tweaks","",1
+		);
+		selectbox(
+			"IntenseBLAST Speaker tweaks","","@personalize","speaker.prop",
+			"Normal","Increases speaker volume at an optimal level with little distortion",0,
+			"Maximum Edition","Increases speaker volume even more with some distortion",0,
+			"Ultimate Edition","Significant speaker volume increase, distortion is inevitable",0,
+			"Revert to stock","Reverts to stock speaker volume levels",0,
+			"Skip IntenseBLAST tweaks","Skips IntenseBLAST Speaker tweaks",1
+		);
+	endif;
+
+##################Firmware####################################
+	checkbox(
+		"Update Firmware",
+		"Please select below:",
+		"icons/firmware",
+		"fw.prop",
+		
+	"Check here to install carrier-agnostic lollipop firmware.","",0
+
+	);
+######################################################
+endif;
+######################################################
+#If selected update only, just restore settings from system
+
+if prop("wipe.prop","selected.0") == "3" then
+    pleasewait("Reading configurations...");
+    setvar("rest_status", resexec("scripts/restore.sh"));
+    if (getvar("rest_status") != "0") then
+	  alert(
+	      "Error",
+	      "Some files from previous configuration are missing\nPlease perform standard installation",
+	      "@error"
+	  );
+	  back("1");
+    endif;
+endif;
+
+menubox(
+  "GP Rom, Digitalhigh Edition",
+  "Ready to install",
+  "@check",
+  "menu.prop",
+  "Install GPE DH Edition","","@install",
+  "Abort installation","","@cancel"
+);
+
+if prop("menu.prop","selected")=="2"
+then
+  exit("");
+endif;
+
+setvar("retstatus",
+install(
+  "Installing",
+  "Installing " + ini_get("rom_name") + " " + ini_get("rom_version") + 
+  "...\nPlease wait until it's finished...",
+  "@install")
+);
+
+#Save installation config
+resexec("scripts/save.sh");
+ini_set("text_next", "Finish");
+
+if getvar("retstatus")=="0" then
+  viewbox(
+   "Installation Completed",
+  "<#fff>Congratulations!!</#>\n\n"+
+  ini_get("rom_name") + " " + ini_get("rom_version") + " has been installed successfully.\n\n"+
+  "Tap Finish, and Reboot your phone.\n\nThanks.",
+  "@info"
+);
+if
+  confirm(
+	"Reboot",
+	"Reboot Now?",
+	"icons/info",
+	"Yes",
+	"No"
+  )=="yes"
+then
+	if prop("fw.prop","item.0.1") =="1" then
+		run_program("/sbin/reboot", "bootloader");
+	else
+		reboot("onfinish");
+	endif;
+endif;
+
+else
+   viewbox("Installation Failed","\n\nInstaller Status: "+ getvar("retstatus"),"@alert");
+endif;

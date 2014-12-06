@@ -1,0 +1,183 @@
+SkyDragon Google Play Edition 
+~*Made from scratch by HolyAngel*~
+
+V4.0.5
+*Rebased to LRX21P
+
+V4.0.4
+*Added tweaks from PwnCakes193 and lagfix zip
+*Disabled ZRAM Completely
+*Added stock MMS app option in aroma
+*Fixed IR issue/updated HTC Service Pack
+
+V4.0.3
+*Rebased on Android L LRX21M.H2
+*Aroma cleaned for Android L
+*Init.d and Tweaks Added
+*Kernel and Rom Rooted with SuperSU 2.19
+
+V3.0.1
+*Replaced google keyboard with Android L keyboard
+*Replaced boot animation with Android L bootanimation
+*Replaced default background with Android L background
+*Added Clear-all Recents key for recent apps screen
+*Disabled Signature Verification
+*Updated SkyDragon kernel to 2.0.1
+- Sweep2wake/sleep, doubletap2wake, tons of enhancements
+*Tweaked Build.prop
+
+V3.0.0
+*Rebased to Android 4.4.4
+*Init.d Support
+*Rooted with SuperSU
+*SkyDragon Kernel 2.0.0 made for 4.4.4
+*System Read/Write
+*Disabled SDCard write protection
+*Ported Aroma
+*Added Advanced Reboot Menu
+*5 column quick settings
+*Tweaked framework/settings/systemui
+*Applied camera and audio tweaks for best quality
+*Added Torch App for flashlight
+*Removed audio selection for compatibility
+
+V2.0.4
+*Fully Disabled Signature Verification for System and User apps
+*Added Clear-All Recents button in recent apps screen 
+*Added App-Ops to settings/security menu 
+*Maxed Audio/Camera settings for best quality 
+*Added Torch app for flashlight 
+*Added kernel tweaker option in aroma
+*Removed Xposed App Ops as no longer needed
+
+V2.0.3
+*Fixed build.prop from 2.0.2
+
+V2.0.2
+*Added Advanced Reboot menu
+*Added Volume wake
+*Added Sweep2sleep module
+*Added Kernel selection in Aroma
+*Added script to add build prop lines if you currently have Project Era Installed
+*Added Option to go back to stock GPE look.
+
+v2.0.1
+*Fixed a couple missing things from v2.0.0
+
+V2.0.0
+*Rebased off Android 4.4.3
+*Removed Kernel options until we have some compatible
+
+V1.5.3
+*Fixed hacked email and Adblocking not installing
+*Added APM by default that works in ART mode
+*Removed AOSP keyboard option for the time being
+*Updated Ad-blocking to latest 5/20
+*Updated all Xposed apps
+*Updated all gapps
+*Replaced stock kernel with my own SkyDragon kernel
+- Based on stock GPE Kernel source
+- Linaro 4.9.1 toolchain optimized
+- Full -Ofast optimization throughout the kernel
+- Tons of schedulers (Fiops/Fifo/Sio/Tripndroid/VR/Zen
+- Some extra governors (DanceDance/Wheatley/Adaptive)
+- All TCP profiles enabled (Westwood/veno/reno/bic/highspeed/hybla/htcp/vegas/scalable/lp/yeah/illinois)
+- Undervolting capable
+- General memory and performance enhancements
+- HD Audio enhancements
+*Updated project era to v16.3
+*Updated Elementalx to v16
+
+V1.5.2
+
+*Fixed OTA Script so future OTA's will be easier to manage for me
+
+*Updated OTA Center
+
+*Added OTA Center to settings app
+
+*Removed stock 'System Update' from settings app
+
+*Fixed Remount RW script to properly remount system partitions for M8
+
+V1.5.1
+*Added Multi-User Support
+*Tweaked icons some more
+*Tweaked framework, settings, systemui
+*Updated all gapps
+*Updated rest of xposed apps
+*Added OTA support
+
+V1.5
+*Deodexed Rom - ART Still Works!
+*Added Project Era V15.2 Option in Aroma
+*Disabled Signature Verification
+*Added APM Option in Aroma - Breaks ART
+*Updated ElementalX to 0.10
+*Tweaked init.d scripts
+*Tweaked build.prop
+*Changed settings and framework icons to z2 icons for a better look
+*Enhanced performance and battery life
+*Updated Xposed
+*Updated Gravity Box
+
+V1.4
+*Updated ElementalX kernel to 0.9
+*Updated stock MMS app to have quick-reply
+*Updated Inverted MMS app to fix MMS issues
+*Added LMT
+*Added Apollo
+*Added SD Tetherhack
+*Added a ton of APN'S
+*Tweaked data speed in build.prop
+
+V1.3
+*Updated ElementalX kernel to 0.8
+*Tweaked Aroma wipe options
+*Temporarily Removed Xperia Keyboard due to compatibity issues
+*Added Google Gallery
+
+V1.2
+*Added Flar2's GPE Kernel
+*Fixed System R/W support
+
+V1.1
+*Fixed Root!
+*Updated Apex launcher
+*Updated Nova Launcher
+*Updated Xperia Launcher to Z2 version with widgets
+*GPS Selection in Aroma
+*Sound Explosion mod option in aroma
+*Removed minminguard from xposed selection as its discontinued
+*Added Xposed AppOps
+*Added 'Mother of all ad-blocking" hosts file optional
+*Choice of Hangouts/MMS/Inverted MMS in aroma
+*Choice of no-pin-security email/exchange app in aroma
+*Better Gapp removal
+*Couple apps edited/added/removed in aroma
+*Tweaked Framework
+*Tweaked Build prop
+*Updated Xposed Installer
+*Updated GravityBox
+*Updated AppOpps
+*Updated Youtube Adaway
+
+V 1.0.0
+*Based on Stock NAND released by Graffixnyc
+*Init.d Built-in
+*Rooted w/ SuperSU 1.94
+*BusyBox Built-in
+*System Read/Write Support
+*External SDCard Write Support
+*Build.prop Tweaks
+- Speed optimizations
+- Battery Optimizations
+*Init.d Tweaks
+*Unsecured Stock Kernel
+*Aroma moved from M7 version
+- Gapp removal
+- Xposed apps
+- Launcher Selection
+- Extra Apps added
+*Bionic Libs from KVT49L(4.4.2_R2)
+*Sweep2sleep navbar module

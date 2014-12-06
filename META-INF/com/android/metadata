@@ -1,0 +1,3 @@
+post-build=htc/m8_google/htc_m8:5.0.1/LRX22C.H2/426932:user/release-keys
+post-timestamp=1416713963
+pre-device=htc_m8

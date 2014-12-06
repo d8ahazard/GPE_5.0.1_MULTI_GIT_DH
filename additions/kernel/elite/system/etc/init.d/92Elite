@@ -1,0 +1,42 @@
+#!/system/bin/sh
+
+#Set Wake Gestures
+ #echo 1 > /sys/android_touch/wake_gestures
+ echo 0 > /sys/android_touch/wake_gestures
+
+#Set Sweep2wake
+  echo 0 > /sys/android_touch/sweep2wake
+  #echo 1 > /sys/android_touch/sweep2wake
+  #echo 2 > /sys/android_touch/sweep2wake
+
+#Set Doubletap2wake
+ #echo 1 > /sys/android_touch/doubletap2wake
+  echo 0 > /sys/android_touch/doubletap2wake
+
+#Set Sweep2sleep
+  #echo 1 > /sys/android_touch/sweep2sleep
+  echo 2 > /sys/android_touch/sweep2sleep
+  #echo 3 > /sys/android_touch/sweep2sleep
+  #echo 0 > /sys/android_touch/sweep2sleep
+
+#Set Pocket Detection
+  #echo 1 > /sys/android_touch/pocket_detect
+  echo 0 > /sys/android_touch/pocket_detect
+
+#Set Camera Launch
+  #echo 0 > /sys/android_touch/camera_gesture
+  echo 1 > /sys/android_touch/camera_gesture
+
+#Set FASTCHARGE
+  #echo 1 > /sys/kernel/fast_charge/force_fast_charge
+  echo 0 > /sys/kernel/fast_charge/force_fast_charge
+
+#cover settings
+  echo 0 > /sys/module/hall_sensor/parameters/disable_cover;
+  #echo 1 > /sys/module/hall_sensor/parameters/disable_cover;
+
+#fstrim
+fstrim -v /cache;
+fstrim -v /data;
+
+exit 0

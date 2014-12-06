@@ -1,0 +1,67 @@
+img.background=background
+img.titlebar=titlebar
+img.navbar=navbar
+img.dialog=dialog
+img.dialog.titlebar=dialog_titlebar
+img.progress=progress_empty.9
+img.progress.fill=progress_full.9
+img.selection=select
+img.selection.push=select_push
+
+img.button=button_rest
+img.button.focus=button_focus
+img.button.push=button_press
+
+img.checkbox=cb
+img.checkbox.focus=cb_sel
+img.checkbox.push=cb_sel
+img.checkbox.on=cb_on
+img.checkbox.on.focus=cb_on_sel
+img.checkbox.on.push=cb_on_sel
+
+img.radio=radio
+img.radio.focus=radio_sel
+img.radio.push=radio_sel
+img.radio.on=radio_on
+img.radio.on.focus=radio_on_sel
+img.radio.on.push=radio_on_sel
+
+
+color.winbg           = #fff
+color.winbg_g         = #444
+color.winfg           = #fff
+color.winfg_gray      = #666
+color.dialogbg        = #fff
+color.dialogbg_g      = #444
+color.dialogfg        = #000
+color.textbg          = #fff
+color.textfg          = #000
+color.textfg_gray     = #aaa
+color.controlbg       = #fff
+color.controlbg_g     = #999
+color.controlfg       = #000
+color.selectbg        = #3F51B5
+color.selectbg_g      = #3F51B5
+color.selectfg        = #000
+color.titlebg         = #fff
+color.titlebg_g       = #fff
+color.titlefg         = #fff
+color.dlgtitlebg      = #fff
+color.dlgtitlebg_g    = #fff
+color.dlgtitlefg      = #000
+color.scrollbar       = #ccc
+color.navbg           = #fff
+color.navbg_g         = #fff
+color.border          = #666
+color.border_g        = #666
+color.progressglow    = #3F51B5
+
+
+config.roundsize             = 1
+config.button_roundsize      = 1
+config.window_roundsize      = 1
+config.transition_frame      = 5
+
+info.themename        = purple
+info.description      = Material Theme for AROMA Installer
+info.author           = Daniiiik49

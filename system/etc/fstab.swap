@@ -1,0 +1,10 @@
+# Android fstab file for enabling zRAM on 2GB device
+
+# zramsize is mandatory and indicates how much uncompressed memory you want the zram area to hold.
+# Compression ratios in the 30-50% range are usually observed.
+
+#<src>          <mnt_point>  <type>  <mnt_flags>  <fs_mgr_flags>
+/dev/block/zram0 none swap defaults zramsize=214748365,swapprio=1000
+/dev/block/zram1 none swap defaults zramsize=214748365,swapprio=1000
+/dev/block/zram2 none swap defaults zramsize=214748365,swapprio=1000
+/dev/block/zram3 none swap defaults zramsize=214748365,swapprio=1000
