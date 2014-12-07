@@ -126,6 +126,17 @@ if prop("mods.prop","item.0.3")=="1" then
 	writetmpfile("addprop", "battpct=1");
 endif;
 
+	####################KERNEL######################################
+	selectbox(
+	"Kernel Selection:",
+	"Please select:",
+	"@apps",
+	"kernel.prop",
+	"Stock","Stock Kernel",1,
+	"Elite GPE","by Buckmarble",0,
+	"BeyondStock","by Captain_Throwback",0,
+	"Skydragon","by HolyAngel",0
+);
 ##########Navbar##############################################
 if prop("mods.prop","item.0.5")=="1" then
   selectbox(
