@@ -11,7 +11,6 @@ datarw
 
 su system setenforce 0
 SELINUX=permissive
-insmod /system/lib/modules/wp_mod.ko
 echo "Permissive SELinux by @hsbadr" >> /data/SELinux.log
 echo "executed on $(date +"%d-%m-%Y %r" )
 
