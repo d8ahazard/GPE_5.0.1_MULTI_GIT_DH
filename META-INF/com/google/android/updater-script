@@ -249,7 +249,7 @@ endif;
 if
     file_getprop("/tmp/aroma-data/navbar.prop","selected.0") == "1"
 then
-    ui_print("|-> navbar stock size       APPLIED");
+    ui_print("-- Stock Navbar Applied");
 	package_extract_dir("additions/navbar_48", "/tmp");
     	run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
         set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
@@ -258,7 +258,7 @@ endif;
 if
     file_getprop("/tmp/aroma-data/navbar.prop","selected.0") == "2"
 then
-    ui_print("|-> navbar smaller size     APPLIED");
+    ui_print("-- Smaller Navbar Applied");
 	package_extract_dir("additions/navbar_36", "/tmp");
     	run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
         set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
@@ -267,7 +267,7 @@ endif;
 if
     file_getprop("/tmp/aroma-data/navbar.prop","selected.0") == "3"
 then
-    ui_print("|-> navbar smallest size    APPLIED");
+    ui_print("-- Small Navbar Applied");
 	package_extract_dir("additions/navbar_32", "/tmp");
     	run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
         set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
@@ -276,12 +276,12 @@ endif;
 if
     file_getprop("/tmp/aroma-data/mods.prop","item.0.5") == "1"
 then
-    ui_print("|-> sweep 2 sleep           APPLIED");
+    ui_print("-- Sweep 2 Sleep enabled");
 	package_extract_dir("additions/s2s", "/system");
         set_perm(0, 0, 0644, "/system/lib/modules/s2s_mod.ko");
         set_perm(0, 0, 0755, "/system/etc/init.d/40s2s");
 else
-    ui_print("|-> sweep 2 sleep           DISABLED");
+    ui_print("-- sweep 2 sleep disabled");
 endif;
 
 
@@ -769,9 +769,79 @@ then
 	ui_print("");
 	ui_print(">>> Installing Skydragon Kernel");
 	set_progress(0.95);
+	########################Mods########################
+
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.1") == "1"
+		 then
+	   ui_print("USB fastcharge enabled");
+	endif;
+
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.2") == "1"
+		 then
+	   ui_print("fsync disabled");
+	endif;
+
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.3") == "1"
+		 then
+	   ui_print("Reduce button vibration");
+	endif;
+
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.4") == "1"
+		 then
+	   ui_print("Enable gboost");
+	endif;
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.4") == "0"
+		 then
+	   ui_print("Disable gboost");
+	endif;
+
+
+
+	ui_print("Cleaning..");
+	set_progress(0.300000);
+	delete("/system/etc/init.d/99elementalx");
+	delete("/system/etc/init.d/99elementalx~");
+	delete("/system/etc/init.d/01-cam");
+	delete("/system/etc/init.d/01-dt2w");
+	delete("/system/etc/init.d/01-fastc");
+	delete("/system/etc/init.d/01-fsync");
+	delete("/system/etc/init.d/01-pocket");
+	delete("/system/etc/init.d/01-s2s");
+	delete("/system/etc/init.d/01-s2w");
+	delete("/system/etc/elementalx.conf");
+	delete("/system/etc/skydragon.conf");
+	delete("/system/etc/init.d/99zram.sh");
+	delete("/system/etc/init.d/85s2s.sh");
+	delete("/system/lib/modules/cpufreq_limit.ko");
+	delete("/system/lib/modules/wp_mod.ko");
+	delete("/system/lib/modules/s2w_mod.ko");
+	delete("/system/lib/modules/s2s_mod.ko");
+	delete("/system/lib/modules/wlan.ko");
+	delete_recursive("/system/etc/META-INF");
+	ui_print("Cleaning Done!");
+
+	set_progress(0.500000);
+	ui_print("Extracting new modules for kernel");
+	package_extract_dir("additions/kernel/Skydragon/system", "/system");
 	assert(package_extract_file("additions/kernel/Skydragon/boot.img", "/tmp/boot.img"),
 	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
-	ui_print(">>> Kernel Installed Successfully!");
+
+	set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
+	run_program("/tmp/systemcheck.sh");
+
+	set_perm_recursive(0, 2000, 0755, 0755, "/system/etc/init.d/99skydragon");
+	set_perm_recursive(0, 2000, 0755, 0755, "/system/bin/fstrim");
+	set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
+	symlink("/system/lib/modules/pronto/pronto_wlan.ko", "/system/lib/modules/wlan.ko");
+
+	set_perm(0, 0, 0777, "/tmp/buildconfig.sh");
+	run_program("/tmp/buildconfig.sh");
+	run_program("/tmp/busybox", "cp", "/tmp/skydragon.conf", "/system/etc/skydragon.conf");
 endif;
 ########################Cleaning Process########################
 set_progress(0.97);
@@ -782,12 +852,13 @@ set_perm_recursive(1000, 1000, 0771, 0644, "/data/app");
 
 ###########################Unmounting###########################
 set_progress(0.99);
-assert(unmount("/data") || ui_print("(Unmounted Data partition..)"));
-assert(unmount("/system") || ui_print("(Unmounted System partition..)"));
-ui_print("@Installing superuser binaries");
 package_extract_dir("supersu", "/tmp/supersu");
 run_program("/sbin/busybox", "unzip", "/tmp/supersu/supersu.zip", "META-INF/com/google/android/*", "-d", "/tmp/supersu");
 run_program("/sbin/busybox", "sh", "/tmp/supersu/META-INF/com/google/android/update-binary", "dummy", "1", "/tmp/supersu/supersu.zip");
+
+assert(unmount("/data") || ui_print("(Unmounted Data partition..)"));
+assert(unmount("/system") || ui_print("(Unmounted System partition..)"));
+ui_print("@Installing superuser binaries");
 ui_print("Success!");
 set_progress(1.0);
 ui_print("");

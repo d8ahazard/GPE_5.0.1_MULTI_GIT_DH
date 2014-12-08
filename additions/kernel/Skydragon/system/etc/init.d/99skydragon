@@ -1,0 +1,105 @@
+#!/system/bin/sh
+
+SKYDCONF="/system/etc/skydragon.conf"
+SKYDLOGFILE="/data/local/tmp/skydragon.log"
+
+echo $(date) >> $SKYDLOGFILE
+
+#Set Wake Gestures
+if [ "`grep WG=1 $SKYDCONF`" ]; then
+  echo 1 > /sys/android_touch/wake_gestures
+  echo Wake gestures enabled >> $SKYDLOGFILE;
+else
+  echo 0 > /sys/android_touch/wake_gestures
+  echo Wake gestures disabled >> $SKYDLOGFILE;
+fi
+
+#Set Sweep2wake
+S2W="`grep S2W $SKYDCONF | cut -d '=' -f2`"
+  echo $S2W > /sys/android_touch/sweep2wake
+  echo Sweep2wake $S2W >> $SKYDLOGFILE;
+
+#Set Doubletap2wake
+if [ "`grep DT2W=1 $SKYDCONF`" ]; then
+  echo 1 > /sys/android_touch/doubletap2wake
+  echo Doubletap2wake enabled >> $SKYDLOGFILE;
+else
+  echo 0 > /sys/android_touch/doubletap2wake
+  echo Doubletap2wake disabled >> $SKYDLOGFILE;
+fi
+
+#Set Sweep2sleep
+if [ "`grep S2S=1 $SKYDCONF`" ]; then
+  echo 1 > /sys/android_touch/sweep2sleep
+  echo Sweep2sleep right enabled >> $SKYDLOGFILE;
+elif [ "`grep S2S=2 $SKYDCONF`" ]; then
+  echo 2 > /sys/android_touch/sweep2sleep
+  echo Sweep2sleep left enabled >> $SKYDLOGFILE;
+elif [ "`grep S2S=3 $SKYDCONF`" ]; then
+  echo 3 > /sys/android_touch/sweep2sleep
+  echo Sweep2sleep left and right enabled >> $SKYDLOGFILE;
+else
+  echo 0 > /sys/android_touch/sweep2sleep
+  echo Sweep2sleep disabled >> $SKYDLOGFILE;
+fi
+
+#Set Wake vibration strength
+WVIB="`grep WVIB $SKYDCONF | cut -d '=' -f2`"
+  echo $WVIB > /sys/android_touch/vib_strength
+  echo Wake vibration strength $WVIB >> $SKYDLOGFILE;
+
+#Set Pocket Detection
+if [ "`grep POCKET=1 $SKYDCONF`" ]; then
+  echo 1 > /sys/android_touch/pocket_detect
+  echo Pocket detection enabled >> $SKYDLOGFILE;
+else
+  echo 0 > /sys/android_touch/pocket_detect
+  echo Pocket detection disabled >> $SKYDLOGFILE;
+fi
+
+#Set Camera Launch
+if [ "`grep CAM=0 $SKYDCONF`" ]; then
+  echo 0 > /sys/android_touch/camera_gesture
+  echo Volume buttons launch camera disabled >> $SKYDLOGFILE;
+else
+  echo 1 > /sys/android_touch/camera_gesture
+  echo Volume buttons launch camera enabled >> $SKYDLOGFILE;
+fi
+
+#Set FASTCHARGE
+if [ "`grep FC=1 $SKYDCONF`" ]; then
+  echo 1 > /sys/kernel/fast_charge/force_fast_charge
+  echo USB Fastcharge enabled >> $SKYDLOGFILE;
+else
+  echo 0 > /sys/kernel/fast_charge/force_fast_charge
+  echo USB Fastcharge disabled >> $SKYDLOGFILE;
+fi
+
+#Set fsync
+if [ "`grep FSYNC=0 $SKYDCONF`" ]; then
+  echo 0 > /sys/module/sync/parameters/fsync_enabled;
+  echo fsync disabled >> $SKYDLOGFILE;
+else
+  echo 1 > /sys/module/sync/parameters/fsync_enabled;
+  echo fsync enabled >> $SKYDLOGFILE;
+fi
+
+#Set vibration
+SVIB=`grep "SVIB" $SKYDCONF | cut -d '=' -f2`
+echo $SVIB > /sys/class/timed_output/vibrator/voltage_level;
+echo Vibration strength\: $SVIB >> $SKYDLOGFILE;
+
+#gboost settings
+if [ "`grep GBOOST=0 $SKYDCONF`" ]; then
+  echo 0 > /sys/devices/system/cpu/cpufreq/ondemand/gboost;
+  echo gboost disabled >> $SKYDLOGFILE;
+fi
+
+#fstrim
+fstrim -v /cache | tee -a $SKYDLOGFILE;
+fstrim -v /data | tee -a $SKYDLOGFILE;
+
+#update saved config
+cp /system/etc/skydragon.conf /data/media/0/.skydragon.backup
+
+exit 0

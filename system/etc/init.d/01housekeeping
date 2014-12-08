@@ -1,13 +1,11 @@
 #!/system/bin/sh
 sysrw
 datarw
-
-#Because nested if statements are fun
-if [ -e /sdcard2/0P6BIMG.zip ]; then
-
 	chmod 755 /system/aroma/addprop
 	#source the magical file
-	. /system/aroma/addprop
+	. /system/aroma/backprop
+	. /system/aroma/battprop
+	. /system/aroma/menuprop
 	#enable longpress on back
 	if
 		[ "$backkey" = "1" ];
@@ -26,7 +24,7 @@ if [ -e /sdcard2/0P6BIMG.zip ]; then
 	then
 		sh /system/bin/tweaks sys status_bar_show_battery_percent 1
 	fi
-fi
+
 # disable google checkin services
 sh /system/bin/tweaks goog perform_market_checkin false
 sh /system/bin/tweaks goog checkin_dropbox_upload true

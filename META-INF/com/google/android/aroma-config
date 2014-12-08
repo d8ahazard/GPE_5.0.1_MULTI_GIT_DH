@@ -117,26 +117,22 @@ endif;
 	
 	);
 if prop("mods.prop","item.0.1")=="1" then
-	writetmpfile("addprop", "backkey=1");
+	writetmpfile("backprop", "backkey=1");
+else
+	writetmpfile("backprop", "backkey=0");
 endif;
 if prop("mods.prop","item.0.2")=="1" then
-	writetmpfile("addprop", "showmenu=1");
+	writetmpfile("menuprop", "showmenu=1");
+else
+	writetmpfile("menuprop", "showmenu=0");
 endif;
 if prop("mods.prop","item.0.3")=="1" then
-	writetmpfile("addprop", "battpct=1");
+	writetmpfile("battprop", "battpct=1");
+else
+	writetmpfile("battprop", "battpct=0");
 endif;
 
-	####################KERNEL######################################
-	selectbox(
-	"Kernel Selection:",
-	"Please select:",
-	"@apps",
-	"kernel.prop",
-	"Stock","Stock Kernel",1,
-	"Elite GPE","by Buckmarble",0,
-	"BeyondStock","by Captain_Throwback",0,
-	"Skydragon","by HolyAngel",0
-);
+
 ##########Navbar##############################################
 if prop("mods.prop","item.0.5")=="1" then
   selectbox(
@@ -191,6 +187,84 @@ endif;
 	"Check here to install carrier-agnostic lollipop firmware.","",0
 
 	);
+	
+	####################KERNEL######################################
+ 
+	selectbox(
+	"Kernel Selection:",
+	"Please select:",
+	"@apps",
+	"kernel.prop",
+  
+	"Stock","Stock Kernel",1,
+	"Elite GPE","by Buckmarble",0,
+	"BeyondStock","by Captain_Throwback",0,
+	"Skydragon","by HolyAngel",0
+);
+################SKYDRAGON CUSTOMIZATION############################################
+	if prop("kernel.prop","selected.0")=="4" then
+
+			selectbox(
+		  "Wake Gestures",
+		  "Customize Wake Gestures\n",
+		  "@info",
+		  "wg.prop",
+		  
+		  "Stock","Do not modify HTC Motion Launch Gestures",0,
+		  "Remove motion requirement","Use launch gestures without having to move phone",1,
+		  "Traditional S2W/DT2W","S2W/DT2W wake screen only",0
+		);
+
+		if file_getprop("/tmp/aroma/wg.prop","selected.0") == "2" || file_getprop("/tmp/aroma/wg.prop","selected.0") == "3"
+		then
+		checkbox(
+		  "Wake Gestures",
+		  "Select the gestures you want to use",
+		  "icons/personalize",
+		  "gest.prop",
+		  
+		  "Available Gestures:","",2,
+		  "Sweep right","",1,
+		  "Sweep left","",1,
+		  "Sweep up","",1,
+		  "Sweep down","",1,
+		  "Double tap","",1,
+		  
+		  "Other Options","",2,
+		  "Vibrate on wake","enable haptic feedback on successful gesture",1,
+		  "Pocket Detection","prevent accidental wakes (experimental)",1,
+		  "Volume buttons launch camera in landscape","",1
+
+		);
+		endif;
+
+		selectbox(
+		  "Sweep2Sleep",
+		  "<b>Sweep across navbar area to put phone to sleep</b>",
+		  "",
+		  "s2s.prop",
+		  
+		  "Disable Sweep2Sleep","",0,
+		  "Sweep right","",0,
+		  "Sweep left","",0,
+		  "Sweep left or right","",1
+		);
+
+		checkbox(
+		  "Other settings",
+		  "<b>Select the mods you want to install</b>",
+		  "@personalize",
+		  "sky.prop",
+		  
+		  "Enable USB fastcharge","",1,
+		  "Disable fsync","Faster fileystem performance, but risk of data loss",0,
+		  "Reduce button vibration","",0,
+		  "Enable gboost","Enhanced gaming performance",1
+		);
+
+	endif;
+
+##############################################################
 ######################################################
 endif;
 ######################################################
