@@ -736,19 +736,19 @@ then
 	ui_print("@Installing Elite GPE kernel");
 	set_progress(0.90);
 	ui_print("-extracting boot.img");
-	assert(package_extract_file("additions/kernel/elite/boot.img", "/tmp/boot.img"),
 	ui_print("-extracting modules");	
 	package_extract_dir("additions/kernel/elite/system", "/system");
 	ui_print("Cleaning up");
 	delete("/system/lib/modules/s2w_mod.ko");
 	set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
 	symlink("/system/lib/modules/pronto/pronto_wlan.ko", "/system/lib/modules/wlan.ko");
-	symlink("/system/lib/modules/exfat.ko", "/system/lib/modules/texfat.ko");
 	ui_print("Setting Permissions");
+	set_perm_recursive(0, 2000, 0777, 0777, "/system/bin/fstrim");
 	set_perm_recursive(0, 2000, 0777, 0777, "/system/etc/init.d/92Elite");
 	ui_print("-flashing boot.img");
+	assert(package_extract_file("additions/kernel/elite/boot.img", "/tmp/boot.img"),
 	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
-	ui_print("elite kernel installed successfully!");
+	ui_print("Elite GPE kernel installed successfully!");
 endif;
 
 
@@ -800,32 +800,6 @@ then
 	   ui_print("Disable gboost");
 	endif;
 
-
-
-	ui_print("Cleaning..");
-	set_progress(0.300000);
-	delete("/system/etc/init.d/99elementalx");
-	delete("/system/etc/init.d/99elementalx~");
-	delete("/system/etc/init.d/01-cam");
-	delete("/system/etc/init.d/01-dt2w");
-	delete("/system/etc/init.d/01-fastc");
-	delete("/system/etc/init.d/01-fsync");
-	delete("/system/etc/init.d/01-pocket");
-	delete("/system/etc/init.d/01-s2s");
-	delete("/system/etc/init.d/01-s2w");
-	delete("/system/etc/elementalx.conf");
-	delete("/system/etc/skydragon.conf");
-	delete("/system/etc/init.d/99zram.sh");
-	delete("/system/etc/init.d/85s2s.sh");
-	delete("/system/lib/modules/cpufreq_limit.ko");
-	delete("/system/lib/modules/wp_mod.ko");
-	delete("/system/lib/modules/s2w_mod.ko");
-	delete("/system/lib/modules/s2s_mod.ko");
-	delete("/system/lib/modules/wlan.ko");
-	delete_recursive("/system/etc/META-INF");
-	ui_print("Cleaning Done!");
-
-	set_progress(0.500000);
 	ui_print("Extracting new modules for kernel");
 	package_extract_dir("additions/kernel/Skydragon/system", "/system");
 	assert(package_extract_file("additions/kernel/Skydragon/boot.img", "/tmp/boot.img"),
