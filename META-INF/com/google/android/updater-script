@@ -967,7 +967,7 @@ then
 	ui_print("@Installing Elite GPE kernel");
 	set_progress(0.90);
 	ui_print("-- Extracting Image Files");
-	package_extract_dir("additions/kernel/elite/res", "/tmp/anykernel/res/");
+	package_extract_dir("additions/kernel/elite/res", "/tmp/anykernel/");
 	ui_print("-- Setting Permissions");
 	set_perm_recursive(0, 2000, 0777, 0777, "/tmp/anykernel.sh");
 	ui_print("-- Executing Anykernel Magic");
