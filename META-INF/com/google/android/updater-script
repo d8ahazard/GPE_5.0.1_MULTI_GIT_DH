@@ -947,18 +947,17 @@ ui_print("-- Success!");
 
 ######################Kernel Installation#######################
 
-ui_print("");
-ui_print("@Installing Kernel");
-ui_print("-- Extracting boot image");
-ui_print("Extracting boot image");
-package_extract_dir("additions/kernel/anykernel/", "/tmp/anykernel/");
-ui_print("Flashing boot image");
-
 if
-	file_getprop("/tmp/aroma-data/kernel.prop","selected.0") == "1" 
+	file_getprop("tmp/aroma/kernel.prop","selected.0") == 1
 then
-	ui_print("@Installing Stock Kernel");
-	run_program("/sbin/dd", "if=/tmp/anykernel/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot");
+	ui_print("");
+	ui_print("@Installing Stock Rooted Kernel");
+	set_progress(0.95);
+	ui_print("Extracting boot image");
+	assert(package_extract_file("additions/kernel/Stock/boot.img", "/tmp/boot.img"),
+	ui_print("Flashing boot image");
+	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
+	ui_print("-- Stock Kernel Installed Successfully!");
 endif;
 
 if
@@ -966,34 +965,34 @@ if
 then
 	ui_print("@Installing Elite GPE kernel");
 	set_progress(0.90);
-	ui_print("-- Extracting Image Files");
-	package_extract_dir("additions/kernel/elite/res", "/tmp/anykernel/");
+	ui_print("-- Extracting Boot Image");
+	assert(package_extract_file("additions/kernel/elite/boot.img", "/tmp/boot.img"),
+	ui_print("-- Extracting Modules");	
+	package_extract_dir("additions/kernel/elite/system", "/system");
+	ui_print("-- Cleaning up");
+	delete("/system/lib/modules/s2w_mod.ko");
 	ui_print("-- Setting Permissions");
-	set_perm_recursive(0, 2000, 0777, 0777, "/tmp/anykernel.sh");
-	ui_print("-- Executing Anykernel Magic");
-	run_program("/tmp/anykernel.sh");
-	ui_print("-- Deleting old modules");
-	delete_recursive("/system/lib/modules");
-	ui_print("-- Extracting modules");
-	package_extract_dir("additions/kernel/elite/system/", "/system/");
 	set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
 	symlink("/system/lib/modules/pronto/pronto_wlan.ko", "/system/lib/modules/wlan.ko");
+	set_perm_recursive(0, 2000, 0777, 0777, "/system/bin/fstrim");
 	set_perm_recursive(0, 2000, 0777, 0777, "/system/etc/init.d/92Elite");
+	ui_print("-- Flashing Boot Image");
+	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
 	ui_print("-- Elite kernel installed successfully!");
 endif;
+
 
 if
 	file_getprop("tmp/aroma/kernel.prop","selected.0") == 3
 then
-	ui_print("@Installing BeyondStock kernel");
-	set_progress(0.90);
-	ui_print("-- Extracting Image Files");
-	package_extract_dir("additions/kernel/beyondstock/res", "/tmp/anykernel");
-	ui_print("-- Setting Permissions");
-	set_perm_recursive(0, 2000, 0777, 0777, "/tmp/anykernel.sh");
-	ui_print("-- Executing Anykernel Magic");
-	run_program("/tmp/anykernel.sh");
-	ui_print("-- Beyondstock kernel installed successfully!");
+	ui_print("");
+	ui_print("@Installing BeyondStock Kernel");
+	set_progress(0.95);
+	ui_print("Extracting boot image");
+	assert(package_extract_file("additions/kernel/Beyondstock/boot.img", "/tmp/boot.img"),
+	ui_print("Flashing boot image");
+	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
+	ui_print("-- BeyondStock Kernel Installed Successfully!");
 endif;
 
 if
@@ -1002,22 +1001,49 @@ then
 	ui_print("");
 	ui_print("@Installing Skydragon Kernel");
 	set_progress(0.95);
-	ui_print("-- Extracting Image Files");
-	package_extract_dir("additions/kernel/Skydragon/res", "/tmp/anykernel");
-	ui_print("-- Setting Permissions");
-	set_perm_recursive(0, 2000, 0777, 0777, "/tmp/anykernel.sh");
-	ui_print("-- Executing Anykernel Magic");
-	run_program("/tmp/anykernel.sh");
-	ui_print("-- Deleting old modules");
-	delete_recursive("/system/lib/modules");
+	########################Mods########################
+
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.1") == "1"
+		 then
+	   ui_print("-- USB fastcharge enabled");
+	endif;
+
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.2") == "1"
+		 then
+	   ui_print("-- Fsync disabled");
+	endif;
+
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.3") == "1"
+		 then
+	   ui_print("-- Reduce button vibration");
+	endif;
+
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.4") == "1"
+		 then
+	   ui_print("-- Enable gboost");
+	endif;
+	if
+	   file_getprop("/tmp/aroma/sky.prop","item.0.4") == "0"
+		 then
+	   ui_print("-- Disable gboost");
+	endif;
+
+	ui_print("-- Cleaning up");
 	ui_print("-- Extracting modules");
-	package_extract_dir("additions/kernel/Skydragon/system/", "/system/");
-	set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
-	ui_print("-- Elite kernel installed successfully!");
+	package_extract_dir("additions/kernel/Skydragon/system", "/system");
+	ui_print("-- Extracting Kernel");
+	assert(package_extract_file("additions/kernel/Skydragon/boot.img", "/tmp/boot.img"),
+	ui_print("-- Flashing Kernel");
+	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
 	set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
 	run_program("/tmp/systemcheck.sh");
 	ui_print("-- Setting Permissions");
 	set_perm_recursive(0, 2000, 0755, 0755, "/system/etc/init.d/99skydragon");
+	set_perm_recursive(0, 2000, 0755, 0755, "/system/bin/fstrim");
 	set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
 	symlink("/system/lib/modules/pronto/pronto_wlan.ko", "/system/lib/modules/wlan.ko");
 	set_perm(0, 0, 0777, "/tmp/buildconfig.sh");

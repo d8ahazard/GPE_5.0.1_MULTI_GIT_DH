@@ -8,7 +8,7 @@ block=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;
 ## AnyKernel methods (DO NOT CHANGE)
 # set up extracted files and directories
 ramdisk=/tmp/anykernel/ramdisk;
-bin=/tmp/anykernel/tools;
+bin=/tmp;
 split_img=/tmp/anykernel/split_img;
 patch=/tmp/anykernel/patch;
 
