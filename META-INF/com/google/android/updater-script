@@ -683,8 +683,8 @@ if
 	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "1"
 then
 	ui_print("-- Installing Verizon-specific files");
-	package_extract_dir("additions/carrier/VZW/system", "/system");
-	package_extract_dir("additions/carrier/VZW/res", "/tmp/res");
+	package_extract_dir("additions/carrier/VERIZON/system", "/system");
+	package_extract_dir("additions/carrier/VERIZON/res", "/tmp/res");
 	run_program("/tmp/cst.sh");
 	ui_print("-- It's a Verizon phone!");
 endif;
