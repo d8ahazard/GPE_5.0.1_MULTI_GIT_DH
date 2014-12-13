@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
-<map>
-    <set name="silently_denied_requests" />
-
-    <boolean name="config_default_enableduringboot" value="true" />
-    <boolean name="config_default_trustsystem" value="true" />
-
-</map>

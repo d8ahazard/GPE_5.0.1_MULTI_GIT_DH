@@ -1,0 +1,35 @@
+#!/system/bin/sh
+#Permissions script
+echo "10permissions"
+
+sysrw
+
+echo "Setting permissions"
+
+chmod 0755 /system/xbin/su
+chmod 4755 /system/xbin/busybox
+chmod 644 /system/build.prop
+chown system:system /data/system
+chmod -R 755 /data/app-lib
+chown system:system /data/app-lib
+chown system:system /data/app-lib/*
+
+echo "Setting /app & /framework permissions"
+for file in /system/app/* /system/framework/* ; do
+   chmod 644 $file
+done
+  
+echo "Setting init.d permissions"
+chmod 777 /system/etc/init.d
+for file in /system/etc/init.d/*; do
+   echo "setting permissions (777) for $file"
+   chmod 777 $file
+done
+
+echo "Setting contacts pics permissions"
+if [ -e /data/data/com.android.providers.contacts/files ]
+then
+   chmod -R 777 /data/data/com.android.providers.contacts/files;
+fi;
+
+echo "10permissions Done."

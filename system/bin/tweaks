@@ -11,7 +11,7 @@ SQL=sqlite3
 SETTINGS=$1
 TWEAK=$2
 VALUE=$3
-DB=/data/data/com.android.providers.settings/databases/settings.db;
+	DB=/data/data/com.android.providers.settings/databases/settings.db;
 DB2=/data/data/com.google.android.gsf/databases/gservices.db;
 	read_sys_setting()
 {
@@ -101,15 +101,15 @@ write_goog_setting()
   PARAM=$1
   NEWVALUE=$2
   if [ ! -e $DB2 ]; then
-	echo "ERROR: DataBase $DB not found!";
+	echo "ERROR: DataBase $DB2 not found!";
   else
   	RETVALUE=`$SQL $DB2 "SELECT value FROM main WHERE name LIKE '$PARAM';"`;
   	if [ "$RETVALUE" = "" ]; then
         	echo "INSERT: value $NEWVALUE";
-        	$SQL $DB "INSERT INTO main(name, value) VALUES('$PARAM', '$NEWVALUE');";
+        	$SQL $DB2 "INSERT INTO main(name, value) VALUES('$PARAM', '$NEWVALUE');";
   	else
         	echo "UPDATE: value $RETVALUE to $NEWVALUE";
-		$SQL $DB "UPDATE main SET value = '$NEWVALUE' WHERE name = '$PARAM';";
+		$SQL $DB2 "UPDATE main SET value = '$NEWVALUE' WHERE name = '$PARAM';";
 	fi;
   fi;
 }
@@ -119,15 +119,15 @@ write_googo_setting()
   PARAM=$1
   NEWVALUE=$2
   if [ ! -e $DB2 ]; then
-	echo "ERROR: DataBase $DB not found!";
+	echo "ERROR: DataBase $DB2 not found!";
   else
   	RETVALUE=`$SQL $DB2 "SELECT value FROM overrides WHERE name LIKE '$PARAM';"`;
   	if [ "$RETVALUE" = "" ]; then
         	echo "INSERT: value $NEWVALUE";
-        	$SQL $DB "INSERT INTO overrides(name, value) VALUES('$PARAM', '$NEWVALUE');";
+        	$SQL $DB2 "INSERT INTO overrides(name, value) VALUES('$PARAM', '$NEWVALUE');";
   	else
         	echo "UPDATE: value $RETVALUE to $NEWVALUE";
-		$SQL $DB "UPDATE overrides SET value = '$NEWVALUE' WHERE name = '$PARAM';";
+		$SQL $DB2 "UPDATE overrides SET value = '$NEWVALUE' WHERE name = '$PARAM';";
 	fi;
   fi;
 }

@@ -83,7 +83,7 @@ endif;
 
 	##################Add Apps####################################
 	checkbox(
-		"apps and mods",
+		"Additional Apps",
 		"Please select which apps you'd like:",
 		"icons/apps",
 		"apps.prop",
@@ -98,7 +98,8 @@ endif;
 	"Google Messenger","Hangouts alternative",0,
 	"File Manager","For managing files and stuff",0,
 	"Security-Disabled Exchange","Remove admin security requirements",1,
-	"Sense Camera","Yes, that one.  Gallery/zoe doesn't work",1
+	"Sense Camera","Yes, that one.  Gallery/zoe doesn't work",1,
+	"HTC Weather","Uh...HTC's Weather app",0
 	);
 ####################MODS######################################
   checkbox(
@@ -116,25 +117,9 @@ endif;
 	"Make Gapps uninstallable","Moves most gapps to data",1
 	
 	);
-if prop("mods.prop","item.0.1")=="1" then
-	writetmpfile("backprop", "backkey=1");
-else
-	writetmpfile("backprop", "backkey=0");
-endif;
-if prop("mods.prop","item.0.2")=="1" then
-	writetmpfile("menuprop", "showmenu=1");
-else
-	writetmpfile("menuprop", "showmenu=0");
-endif;
-if prop("mods.prop","item.0.3")=="1" then
-	writetmpfile("battprop", "battpct=1");
-else
-	writetmpfile("battprop", "battpct=0");
-endif;
-
 
 ##########Navbar##############################################
-if prop("mods.prop","item.0.5")=="1" then
+if prop("mods.prop","item.0.4")=="1" then
   selectbox(
     "navbar size",
     "please indicate:",
@@ -147,7 +132,6 @@ if prop("mods.prop","item.0.5")=="1" then
 else
     writetmpfile("navbar.prop", "selected.0=1\n");
 endif;
-
 
 	##################Audio####################################
 	selectbox(
@@ -187,7 +171,6 @@ endif;
 	"Check here to install carrier-agnostic lollipop firmware.","",0
 
 	);
-	
 	####################KERNEL######################################
  
 	selectbox(

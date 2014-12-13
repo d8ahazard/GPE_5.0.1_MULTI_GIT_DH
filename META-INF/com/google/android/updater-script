@@ -1,147 +1,116 @@
-assert(unmount("/system") || ui_print("Preparing system for installation..."));
-mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "/system");
-assert(unmount("/data") || ui_print("Preparing data for installation..."));
+ui_print("@Preparing for installation");
+assert(unmount("/data") || ui_print("-- Unmount data..."));
 mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/userdata", "/data");
-set_progress(0.08);
+ui_print("-- Extracting tools");
 package_extract_dir("tools", "/tmp");
 set_perm_recursive(0, 0, 0777, 0777, "/tmp");
+set_progress(0.08);
+ui_print("-- Ready!");
+ifelse(is_mounted("/system") == "/system", unmount("/system"));
 
-if
-	file_getprop("/tmp/aroma-data/wipe.prop","selected.0") == "1"
-then
-    ui_print("@Executing Full Wipe");
-	
-	ui_print("-- Erasing & formatting /system as EXT4");
-	assert(unmount("/system") || ui_print("(Unmounted System partition..)"));
-	format("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "0", "/system");
-	set_progress(0.1);
-	ui_print("System Partition Formatted!");
-	run_program("/sbin/sleep", "2");
-	ui_print("System Partition Formatted!");
-	ui_print("-- Erasing & formatting /cache as EXT4");
-	run_program("/sbin/mount", "/cache");
-	delete_recursive("/cache");
-	set_progress(0.12);
-	ui_print("Cache Partition Formatted");
-	ui_print("-- Erasing & formatting /data as EXT4");
-    ui_print("Formatting Data Partition Via Script");
-    package_extract_file("tools/wipe.sh", "/tmp/wipe.sh");
-    set_perm(0, 0, 0777, "/tmp/wipe.sh");
-	run_program("/sbin/mount", "/data");
-    run_program("/tmp/wipe.sh");;
-	set_progress(0.16);
-	ui_print("Data Partition Formatted");
-	ui_print("-- Removing system files from SD card");
-    delete_recursive("/sdcard/.android_secure");
-    delete_recursive("/sdcard/.bookmark_thumb1");
-    delete_recursive("/sdcard/.data");
-    delete_recursive("/sdcard/Android");
-    delete_recursive("/sdcard/bugreports");
-    delete_recursive("/sdcard/LazyList");
-    delete_recursive("/sdcard/LOST.DIR");
-    delete_recursive("/sdcard/tmp");
-    run_program("/sbin/sleep", "2");
-	set_progress(.2);
-endif;
+ui_print("@Formatting Partitions");
+ui_print("-- Formatting /system");
+run_program("/sbin/mke2fs", "-t", "ext4", "-m", "0", "/dev/block/platform/msm_sdcc.1/by-name/system");
+ui_print("   Formatting /cache");
+run_program("/sbin/mke2fs", "-t", "ext4", "-m", "0", "/dev/block/platform/msm_sdcc.1/by-name/cache");
 
-if
-	file_getprop("/tmp/aroma-data/wipe.prop","selected.0") == "2"
-then
-	ui_print("@Executing Dirty Wipe");
-	set_progress(0.1);
-	ui_print("-- Erasing & formatting /system as EXT4");
-	assert(unmount("/system") || ui_print("(Unmounted System partition..)"));
-	format("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "0", "/system");
-	run_program("/sbin/sleep", "2");
-	set_progress(0.15);
-	ui_print("System Partition Formatted!");
-	ui_print("-- Erasing & formatting /cache as EXT4");
-	run_program("/sbin/mount", "/cache");
-	delete_recursive("/cache");
-	ui_print("Cache Partition Formatted");
-	set_progress(0.2);
-	ui_print("Cleaning up some stuff");
+if file_getprop("/tmp/aroma-data/wipe.prop", "selected.0") == "2" then
+	ui_print("   Wiping /data except for /data/media");
+	run_program("/sbin/busybox", "mount", "/data");
+	#mount("ext4", "EMMC", "data", "/data");
+	run_program("/sbin/busybox", "sh", "/tmp/wipe.sh");
+	ifelse(is_mounted("/data") == "/data", unmount("/data"));
+	set_progress(0.05);
+	ui_print("-- system files from SD Card");
+	delete_recursive("/sdcard/.android_secure");                                         
+	delete_recursive("/sdcard/.bookmark_thumb1");
+	delete_recursive("/sdcard/LazyList");
+	delete_recursive("/sdcard/LOST.DIR");
+	ui_print("-- Deleting problem files");
 	delete("/data/data/com.android.providers.telephony/databases/telephony.db");
 	delete("/data/data/com.android.providers.telephony/databases/telephony.db-journal");
 	delete_recursive("/data/data/com.android.providers.telephony/shared_prefs");
-	ui_print("Deleting old apps");
-	delete_recursive("/data/data/com.android.chrome-1");
-	delete_recursive("/data/data/com.android.chrome-2");
-	delete_recursive("/data/data/com.android.chrome-3");
-	delete_recursive("/data/data/com.google.android.apps.books-1");
-	delete_recursive("/data/data/com.google.android.apps.books-2");
-	delete_recursive("/data/data/com.google.android.apps.books-3");
-	delete_recursive("/data/data/com.google.android.apps.chromecast.app-1");
-	delete_recursive("/data/data/com.google.android.apps.chromecast.app-2");
-	delete_recursive("/data/data/com.google.android.apps.chromecast.app-3");
-	delete_recursive("/data/data/com.google.android.apps.docs.editors.docs-1");
-	delete_recursive("/data/data/com.google.android.apps.docs.editors.docs-2");
-	delete_recursive("/data/data/com.google.android.apps.docs.editors.docs-3");
-	delete_recursive("/data/data/com.google.android.apps.docs.editors.sheets-1");
-	delete_recursive("/data/data/com.google.android.apps.docs.editors.sheets-2");
-	delete_recursive("/data/data/com.google.android.apps.docs.editors.sheets-3");
-	delete_recursive("/data/data/com.google.android.apps.docs.editors.slides-1");
-	delete_recursive("/data/data/com.google.android.apps.docs.editors.slides-2");
-	delete_recursive("/data/data/com.google.android.apps.docs.editors.slides-3");
-	delete_recursive("/data/data/com.google.android.apps.docs-1");
-	delete_recursive("/data/data/com.google.android.apps.docs-2");
-	delete_recursive("/data/data/com.google.android.apps.docs-3");
-	delete_recursive("/data/data/com.google.android.apps.magazines-1");
-	delete_recursive("/data/data/com.google.android.apps.magazines-2");
-	delete_recursive("/data/data/com.google.android.apps.magazines-3");
-	delete_recursive("/data/data/com.google.android.apps.maps-1");
-	delete_recursive("/data/data/com.google.android.apps.maps-2");
-	delete_recursive("/data/data/com.google.android.apps.maps-3");
-	delete_recursive("/data/data/com.google.android.apps.plus-1");
-	delete_recursive("/data/data/com.google.android.apps.plus-2");
-	delete_recursive("/data/data/com.google.android.apps.plus-3");
-	delete_recursive("/data/data/com.google.android.apps.walletnfcrel-1");
-	delete_recursive("/data/data/com.google.android.apps.walletnfcrel-2");
-	delete_recursive("/data/data/com.google.android.apps.walletnfcrel-3");
-	delete_recursive("/data/data/com.google.android.calendar-1");
-	delete_recursive("/data/data/com.google.android.calendar-2");
-	delete_recursive("/data/data/com.google.android.calendar-3");
-	delete_recursive("/data/data/com.google.android.gm-1");
-	delete_recursive("/data/data/com.google.android.gm-2");
-	delete_recursive("/data/data/com.google.android.gm-3");
-	delete_recursive("/data/data/com.google.android.gms-1");
-	delete_recursive("/data/data/com.google.android.gms-2");
-	delete_recursive("/data/data/com.google.android.gms-3");
-	delete_recursive("/data/data/com.google.android.GoogleCamera-1");
-	delete_recursive("/data/data/com.google.android.GoogleCamera-2");
-	delete_recursive("/data/data/com.google.android.GoogleCamera-3");
-	delete_recursive("/data/data/com.google.android.inputmethod.latin-1");
-	delete_recursive("/data/data/com.google.android.inputmethod.latin-2");
-	delete_recursive("/data/data/com.google.android.inputmethod.latin-3");
-	delete_recursive("/data/data/com.google.android.keep-1");
-	delete_recursive("/data/data/com.google.android.keep-2");
-	delete_recursive("/data/data/com.google.android.keep-3");
-	delete_recursive("/data/data/com.google.android.music-1");
-	delete_recursive("/data/data/com.google.android.music-2");
-	delete_recursive("/data/data/com.google.android.music-3");
-	delete_recursive("/data/data/com.google.android.play.games-1");
-	delete_recursive("/data/data/com.google.android.play.games-2");
-	delete_recursive("/data/data/com.google.android.play.games-3");
-	delete_recursive("/data/data/com.google.android.videos-1");
-	delete_recursive("/data/data/com.google.android.videos-2");
-	delete_recursive("/data/data/com.google.android.videos-3");
-	delete_recursive("/data/data/com.google.android.youtube-1");
-	delete_recursive("/data/data/com.google.android.youtube-2");
-	delete_recursive("/data/data/com.google.android.youtube-3");
-	delete_recursive("/data/data/com.google.earth-1");
-	delete_recursive("/data/data/com.google.earth-2");
-	delete_recursive("/data/data/com.google.earth-3");
-	delete_recursive("/data/data/com.htc.dotmatrix-1");
-	delete_recursive("/data/data/com.htc.dotmatrix-2");
-	delete_recursive("/data/data/com.htc.dotmatrix-3");
-	delete_recursive("/data/data/com.htc.sense.hsp-1");
-	delete_recursive("/data/data/com.htc.sense.hsp-2");
-	delete_recursive("/data/data/com.htc.sense.hsp-3");
-	delete_recursive("/data/data/com.htc.videohub.ui-1");
-	delete_recursive("/data/data/com.htc.videohub.ui-2");
-	delete_recursive("/data/data/com.htc.videohub.ui-3");
-
+	ui_print("-- Deleting old apps");
+	delete_recursive("/data/app/com.android.chrome-1");
+	delete_recursive("/data/app/com.android.chrome-2");
+	delete_recursive("/data/app/com.android.chrome-3");
+	delete_recursive("/data/app/com.google.android.apps.books-1");
+	delete_recursive("/data/app/com.google.android.apps.books-2");
+	delete_recursive("/data/app/com.google.android.apps.books-3");
+	delete_recursive("/data/app/com.google.android.apps.chromecast.app-1");
+	delete_recursive("/data/app/com.google.android.apps.chromecast.app-2");
+	delete_recursive("/data/app/com.google.android.apps.chromecast.app-3");
+	delete_recursive("/data/app/com.google.android.apps.docs.editors.docs-1");
+	delete_recursive("/data/app/com.google.android.apps.docs.editors.docs-2");
+	delete_recursive("/data/app/com.google.android.apps.docs.editors.docs-3");
+	delete_recursive("/data/app/com.google.android.apps.docs.editors.sheets-1");
+	delete_recursive("/data/app/com.google.android.apps.docs.editors.sheets-2");
+	delete_recursive("/data/app/com.google.android.apps.docs.editors.sheets-3");
+	delete_recursive("/data/app/com.google.android.apps.docs.editors.slides-1");
+	delete_recursive("/data/app/com.google.android.apps.docs.editors.slides-2");
+	delete_recursive("/data/app/com.google.android.apps.docs.editors.slides-3");
+	delete_recursive("/data/app/com.google.android.apps.docs-1");
+	delete_recursive("/data/app/com.google.android.apps.docs-2");
+	delete_recursive("/data/app/com.google.android.apps.docs-3");
+	delete_recursive("/data/app/com.google.android.apps.magazines-1");
+	delete_recursive("/data/app/com.google.android.apps.magazines-2");
+	delete_recursive("/data/app/com.google.android.apps.magazines-3");
+	delete_recursive("/data/app/com.google.android.apps.maps-1");
+	delete_recursive("/data/app/com.google.android.apps.maps-2");
+	delete_recursive("/data/app/com.google.android.apps.maps-3");
+	delete_recursive("/data/app/com.google.android.apps.plus-1");
+	delete_recursive("/data/app/com.google.android.apps.plus-2");
+	delete_recursive("/data/app/com.google.android.apps.plus-3");
+	delete_recursive("/data/app/com.google.android.apps.walletnfcrel-1");
+	delete_recursive("/data/app/com.google.android.apps.walletnfcrel-2");
+	delete_recursive("/data/app/com.google.android.apps.walletnfcrel-3");
+	delete_recursive("/data/app/com.google.android.calendar-1");
+	delete_recursive("/data/app/com.google.android.calendar-2");
+	delete_recursive("/data/app/com.google.android.calendar-3");
+	delete_recursive("/data/app/com.google.android.gm-1");
+	delete_recursive("/data/app/com.google.android.gm-2");
+	delete_recursive("/data/app/com.google.android.gm-3");
+	delete_recursive("/data/app/com.google.android.gms-1");
+	delete_recursive("/data/app/com.google.android.gms-2");
+	delete_recursive("/data/app/com.google.android.gms-3");
+	delete_recursive("/data/app/com.google.android.GoogleCamera-1");
+	delete_recursive("/data/app/com.google.android.GoogleCamera-2");
+	delete_recursive("/data/app/com.google.android.GoogleCamera-3");
+	delete_recursive("/data/app/com.google.android.googlequicksearchbox-1");
+	delete_recursive("/data/app/com.google.android.googlequicksearchbox-2");
+	delete_recursive("/data/app/com.google.android.googlequicksearchbox-3");
+	delete_recursive("/data/app/com.google.android.inputmethod.latin-1");
+	delete_recursive("/data/app/com.google.android.inputmethod.latin-2");
+	delete_recursive("/data/app/com.google.android.inputmethod.latin-3");
+	delete_recursive("/data/app/com.google.android.keep-1");
+	delete_recursive("/data/app/com.google.android.keep-2");
+	delete_recursive("/data/app/com.google.android.keep-3");
+	delete_recursive("/data/app/com.google.android.music-1");
+	delete_recursive("/data/app/com.google.android.music-2");
+	delete_recursive("/data/app/com.google.android.music-3");
+	delete_recursive("/data/app/com.google.android.play.games-1");
+	delete_recursive("/data/app/com.google.android.play.games-2");
+	delete_recursive("/data/app/com.google.android.play.games-3");
+	delete_recursive("/data/app/com.google.android.videos-1");
+	delete_recursive("/data/app/com.google.android.videos-2");
+	delete_recursive("/data/app/com.google.android.videos-3");
+	delete_recursive("/data/app/com.google.android.youtube-1");
+	delete_recursive("/data/app/com.google.android.youtube-2");
+	delete_recursive("/data/app/com.google.android.youtube-3");
+	delete_recursive("/data/app/com.google.earth-1");
+	delete_recursive("/data/app/com.google.earth-2");
+	delete_recursive("/data/app/com.google.earth-3");
+	delete_recursive("/data/app/com.htc.dotmatrix-1");
+	delete_recursive("/data/app/com.htc.dotmatrix-2");
+	delete_recursive("/data/app/com.htc.dotmatrix-3");
+	delete_recursive("/data/app/com.htc.sense.hsp-1");
+	delete_recursive("/data/app/com.htc.sense.hsp-2");
+	delete_recursive("/data/app/com.htc.sense.hsp-3");
+	delete_recursive("/data/app/com.htc.videohub.ui-1");
+	delete_recursive("/data/app/com.htc.videohub.ui-2");
+	delete_recursive("/data/app/com.htc.videohub.ui-3");
 endif;
+ui_print("-- Success!");
 
 ##########################Installation##########################
 
@@ -149,22 +118,22 @@ ui_print("@Installing ROM");
 set_progress(0.22);
 ui_print("-- Mounting Data Partition For Writing");
 run_program("/sbin/mount", "/data");
-ui_print("Writing Rom Data to Data Partition");
+ui_print("-- Writing Rom Data to Data Partition");
 package_extract_dir("data", "/data");
 set_progress(0.3);
-ui_print("Rom Data Written Successfully!");
 ui_print("-- Mounting System Partition For Writing");
 mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "/system");
-ui_print("Writing Rom System to System Partition");
+ui_print("-- Writing Rom System to System Partition");
 package_extract_dir("system", "/system");
-ui_print("Rom System Written Successfully!");
+ui_print("-- Success!");
 
 #write hacked linker on the update session
-    package_extract_dir("additions/pie_hack", "/system");
-    set_perm(0, 2000, 0755, "/system/bin/linker");
+package_extract_dir("additions/pie_hack", "/system");
+set_perm(0, 2000, 0755, "/system/bin/linker");
 #########################Begin of AROMA#########################
 set_progress(0.7);
 #######################ADD APPS################################
+ui_print("@Installing Additional Apps");
 
 if
 	file_getprop("tmp/aroma-data/apps.prop","item.0.1") == "1"
@@ -243,25 +212,49 @@ then
 	package_extract_dir("additions/apps/SenseCamera/system", "/system/");
 endif;
 
-#####################MODS####################################################
+if
+	file_getprop("tmp/aroma-data/apps.prop","item.0.12") == "1"
+then
+	ui_print("-- Installing HTC Weather");
+	package_extract_dir("additions/apps/HTCWeather/system", "/system/");
+endif;
+ui_print("-- Success!");
 
+#####################MODS####################################################
+ui_print("@Applying Custom Modifications");
+
+if
+    file_getprop("/tmp/aroma-data/mods.prop","item.0.1") == "1"
+then
+    ui_print("-- Enabling Longpress to Kill App");
+endif;
+
+if
+    file_getprop("/tmp/aroma-data/mods.prop","item.0.2") == "1"
+then
+    ui_print("-- Enabling Persistent Menu Button");
+endif;
+
+if
+    file_getprop("/tmp/aroma-data/mods.prop","item.0.3") == "1"
+then
+    ui_print("-- Enabling Battery Percentage");
+endif;
 
 if
     file_getprop("/tmp/aroma-data/navbar.prop","selected.0") == "1"
 then
     ui_print("-- Stock Navbar Applied");
-	package_extract_dir("additions/navbar_48", "/tmp");
-    	run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
-        set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
+	
 endif;
 
 if
     file_getprop("/tmp/aroma-data/navbar.prop","selected.0") == "2"
 then
-    ui_print("-- Smaller Navbar Applied");
+    ui_print("-- Medium Navbar Applied");
 	package_extract_dir("additions/navbar_36", "/tmp");
-    	run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
-        set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
+    run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
+    set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
 endif;
 
 if
@@ -269,19 +262,19 @@ if
 then
     ui_print("-- Small Navbar Applied");
 	package_extract_dir("additions/navbar_32", "/tmp");
-    	run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
-        set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
+    run_program("/tmp/res_patch.sh", "/system/framework/framework-res.apk");
+    set_perm(0, 0, 0644, "/system/framework/framework-res.apk");
 endif;
 
 if
     file_getprop("/tmp/aroma-data/mods.prop","item.0.5") == "1"
 then
-    ui_print("-- Sweep 2 Sleep enabled");
+    ui_print("-- Sweep 2 Sleep Enabled");
 	package_extract_dir("additions/s2s", "/system");
         set_perm(0, 0, 0644, "/system/lib/modules/s2s_mod.ko");
         set_perm(0, 0, 0755, "/system/etc/init.d/40s2s");
 else
-    ui_print("-- sweep 2 sleep disabled");
+    ui_print("-- Sweep 2 Sleep Disabled");
 endif;
 
 
@@ -303,81 +296,67 @@ if
 	file_getprop("tmp/aroma-data/mods.prop","item.0.8") == "1"
 then
 	ui_print("@Moving System apps to data");
+	delete_recursive("data/app/Books");
 	run_program("/sbin/mv", "/system/app/Books","/data/app/Books");
+	delete_recursive("system/app/Books");
+	ui_print("-- Books");
+	delete_recursive("data/app/Chrome");
 	run_program("/sbin/mv", "/system/app/Chrome","/data/app/Chrome");
+	delete_recursive("system/app/Chrome");
+	ui_print("-- Chrome");
+	delete_recursive("data/app/EditorsDocs");
 	run_program("/sbin/mv", "/system/app/EditorsDocs","/data/app/EditorsDocs");
+	delete_recursive("system/app/EditorsDocs");
+	ui_print("-- Docs");
+	delete_recursive("data/app/EditorsSheets");
 	run_program("/sbin/mv", "/system/app/EditorsSheets","/data/app/EditorsSheets");
+	delete_recursive("system/app/EditorsSheets");
+	ui_print("-- Sheets");
+	delete_recursive("data/app/EditorsSlides");
 	run_program("/sbin/mv", "/system/app/EditorsSlides","/data/app/EditorsSlides");
+	delete_recursive("system/app/EditorsSlides");
+	ui_print("-- Slides");
+	delete_recursive("data/app/GoogleEarth");
 	run_program("/sbin/mv", "/system/app/GoogleEarth","/data/app/GoogleEarth");
+	delete_recursive("system/app/GoogleEarth");
+	ui_print("-- Google Earth");
+	delete_recursive("data/app/Keep");
 	run_program("/sbin/mv", "/system/app/Keep","/data/app/Keep");
+	delete_recursive("system/app/Keep");
+	ui_print("-- Keep");
+	delete_recursive("data/app/Maps");
 	run_program("/sbin/mv", "/system/app/Maps","/data/app/Maps");
-	run_program("/sbin/mv", "/system/app/Newsstand","/data/app/Newsstand");
-	run_program("/sbin/mv", "/system/app/NewsWeather","/data/app/Newsstand");
+	delete_recursive("system/app/Maps");
+	ui_print("-- Maps");
+	delete_recursive("data/app/NewsStand");
+	run_program("/sbin/mv", "/system/app/NewsStand","/data/app/NewsStand");
+	delete_recursive("system/app/NewsStand");
+	ui_print("-- NewsStand");
+	delete_recursive("data/app/NewsWeather");
+	run_program("/sbin/mv", "/system/app/NewsWeather","/data/app/NewsWeather");
+	delete_recursive("system/app/NewsWeather");
+	ui_print("-- News & Weather");
+	delete_recursive("data/app/PlayGames");
 	run_program("/sbin/mv", "/system/app/PlayGames","/data/app/PlayGames");
+	delete_recursive("system/app/PlayGames");
+	ui_print("-- Play Games");
+	delete_recursive("data/app/PlusOne");
 	run_program("/sbin/mv", "/system/app/PlusOne","/data/app/PlusOne");
+	delete_recursive("system/app/PlusOne");
+	ui_print("-- Google+");
+	delete_recursive("data/app/Street");
 	run_program("/sbin/mv", "/system/app/Street","/data/app/Street");
+	delete_recursive("system/app/Street");
+	ui_print("-- Street");
+	delete_recursive("data/app/Videos");
 	run_program("/sbin/mv", "/system/app/Videos","/data/app/Videos");
+	delete_recursive("system/app/Videos");
+	ui_print("-- Videos");
+	delete_recursive("data/app/Youtube");
 	run_program("/sbin/mv", "/system/app/Youtube","/data/app/Youtube");
-	ui_print("Done!");
-endif;
-
-#######################Firmware################################
-set_progress(0.75);
-if
-	file_getprop("/tmp/aroma-data/fw.prop","item.0.1") == "1"
-then
-	ui_print("-- Copying Firmware to SDCard");
-	package_extract_file("tools/checksd.sh", "/tmp/checksd.sh");
-    set_perm(0, 0, 0777, "/tmp/checksd.sh");
-	run_program("/tmp/checksd.sh");;
-	if
-		file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "2"
-	then
-		if
-			file_getprop("/tmp/aroma-data/sd.prop","hassd") == "1"
-		then
-			package_extract_file("additions/firmware/0P6BIMG_s.zip", "/external_sd/0P6BIMG.zip");
-		else
-			package_extract_file("additions/firmware/0P6BIMG_s.zip", "/sdcard/0P6BIMG.zip");
-		endif;
-	else
-		if
-			file_getprop("/tmp/aroma-data/sd.prop","hassd") == "1"
-		then
-			package_extract_file("additions/firmware/0P6BIMG.zip", "/external_sd/0P6BIMG.zip");
-		else
-			package_extract_file("additions/firmware/0P6BIMG.zip", "/sdcard/0P6BIMG.zip");
-		endif;
-	endif;
-endif;
-set_progress(0.8);
-#######################Carrier################################
-if
-	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "1"
-then
-	ui_print("-- Installing Verizon-specific files");
-endif;
-if
-	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "2"
-then
-	ui_print("-- Installing Sprint-specific files");
-	package_extract_dir("additions/carrier/SPRINT/system", "/system");
-	package_extract_dir("additions/carrier/SPRINT/res","/tmp/res");
-#	package_extract_file("tools/cst.sh", "/tmp/cst.sh");
-#	set_perm(0, 0, 0777, "/tmp/cst.sh");
-#	run_program("/tmp/cst.sh");
-#	delete("/tmp/cst.sh");
-endif;
-if
-	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "3"
-then
-	ui_print("-- Installing GSM-specific files");
-	package_extract_dir("additions/carrier/GSM/system", "/system");
-	package_extract_dir("additions/carrier/GSM/res","/tmp/res");
-#	package_extract_file("tools/cst.sh", "/tmp/cst.sh");
-#	set_perm(0, 0, 0777, "/tmp/cst.sh");
-#	run_program("/tmp/cst.sh");
-#	delete("/tmp/cst.sh");
+	delete_recursive("system/app/Youtube");
+	ui_print("-- Youtube");
+	ui_print("-- Success!");
 endif;
 
 ######################Audio#####################################
@@ -385,104 +364,136 @@ set_progress(0.85);
 if
 	file_getprop("tmp/aroma/audio.prop","selected.0") == 2
 then
+	ui_print("@Installing ProjectERA Sound Mod");
+	ui_print("-- Extracting System Files");
 	package_extract_dir("additions/audio/ProjectEra/system", "/system");
-	set_progress(0.4);
-	ui_print("");
-	ui_print("");
-	ui_print("Setting perms");
-	set_perm(0, 2000, 0755, "/system/bin/alsa_amixer");
-	set_perm(0, 2000, 0755, "/system/bin/alsa_aplay");
-	set_perm(0, 2000, 0755, "/system/bin/alsa_ctl");
-	set_perm(0, 2000, 0755, "/system/bin/arm-linux-gnueabi-sndfile-resample");
-	ui_print("");
-	ui_print("");
-	ui_print("Adding lines to build.prop...");
-	package_extract_file("tools/gpeera.sh", "/tmp/gpeera.sh");
-	set_perm(0, 0, 0777, "/tmp/gpeera.sh");
-	run_program("/tmp/gpeera.sh");
-	delete("/tmp/gpeera.sh");
 	if
 		file_getprop("/tmp/aroma/beats.prop","selected.0") == "1"
 	then
-		ui_print("Installing Beats Audio PsychoRealism");
+		ui_print("-- Installing Beats Audio PsychoRealism");
 		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/PsychoRealism", "/system");
 	endif;
 	if
 		file_getprop("/tmp/aroma/beats.prop","selected.0") == "2"
 	then
-		ui_print("");
-		ui_print("");
-	    	ui_print("Installing Beats Audio InfinitySound");
+		ui_print("-- Installing Beats Audio InfinitySound");
 		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/BeatsAudio/InfinitySound", "/system");
 	endif;
 	if
 	    file_getprop("/tmp/aroma/beats.prop","selected.0") == "3"
 	then
-		ui_print("");
-		ui_print("");
-	    ui_print("Installing Stock Beats Audio");
+		ui_print("-- Installing Stock Beats Audio");
 		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/BeatsAudio/BeatsStock", "/system");
 	endif;
 	if
 	    file_getprop("/tmp/aroma/beats.prop","selected.0") == "4"
 	then
-		ui_print("");
-		ui_print("");
-	    ui_print("Skipping Beats Audio Tweaks...");
+	    ui_print("-- Skipping Beats Audio Tweaks...");
 	endif;
 	set_progress(0.7);
 	# IntenseBLAST
 	if
 	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "1"
 	then
-		ui_print("");
-		ui_print("");
-	    ui_print("Installing Normal IntenseBLAST, MAKE SURE TO TURN ON BEATS AUDIO ON SPEAKERS TO ENABLE THIS TWEAK!");
+	    ui_print("-- Installing Normal IntenseBlast");
 		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/IntenseBLAST/normal", "/system");
 	endif;
 	if
 	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "2"
 	then
-		ui_print("");
-		ui_print("");
-	    ui_print("Installing IntenseBLAST Maximum Edition, MAKE SURE TO TURN ON BEATS AUDIO ON SPEAKERS TO ENABLE THIS TWEAK!");
+	    ui_print("-- Installing IntenseBLAST Maximum Edition");
 		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/IntenseBLAST/maximum", "/system");
 	endif;
 	if
 	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "3"
 	then
-		ui_print("");
-		ui_print("");
-	    ui_print("Installing IntenseBLAST Ultimate Edition, MAKE SURE TO TURN ON BEATS AUDIO ON SPEAKERS TO ENABLE THIS TWEAK!");
+	    ui_print("-- Installing IntenseBLAST Ultimate Edition");
 		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/IntenseBLAST/ultimate", "/system");
 	endif;
 	if
 	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "4"
 	then
-		ui_print("");
-		ui_print("");
-	    ui_print("Reverting to stock speaker volume");
+	    ui_print("-- Using stock speaker volume");
 		package_extract_dir("/additions/audio/BeatsAudio/ProjectEra/IntenseBLAST/stock", "/system");
 	endif;
 	if
 	    file_getprop("/tmp/aroma/speaker.prop","selected.0") == "5"
 	then
-	ui_print("Skipping IntenseBLAST tweaks...");
+	ui_print("-- Skipping IntenseBLAST tweaks...");
 	endif;
+	ui_print("-- Setting Some Permissions");
+	set_perm(0, 2000, 0755, "/system/bin/alsa_amixer");
+	set_perm(0, 2000, 0755, "/system/bin/alsa_aplay");
+	set_perm(0, 2000, 0755, "/system/bin/alsa_ctl");
+	set_perm(0, 2000, 0755, "/system/bin/arm-linux-gnueabi-sndfile-resample");
+	ui_print("-- Adding lines to build.prop...");
+	package_extract_file("tools/gpeera.sh", "/tmp/gpeera.sh");
+	set_perm(0, 0, 0777, "/tmp/gpeera.sh");
+	run_program("/tmp/gpeera.sh");
+	delete("/tmp/gpeera.sh");
 	package_extract_dir("sdcard", "/sdcard");
+	ui_print("-- Success!");
 endif;
+
 if
 	file_getprop("tmp/aroma/audio.prop","selected.0") == 3
 then
+	ui_print("@Installing Viper4Android_FX");
+	package_extract_dir("additions/audio/Viper4Android/system", "/system/");
+	ui_print("-- Extracting System Files");
+	package_extract_dir("additions/audio/Viper4Android/sdcard", "/sdcard/");
+	ui_print("-- Extracting Audio Profiles to SDCard");
 	ui_print("Adding lines to build.prop...");
 	package_extract_file("tools/gpev4a.sh", "/tmp/gpev4a.sh");
 	set_perm(0, 0, 0777, "/tmp/gpev4a.sh");
 	run_program("/tmp/gpev4a.sh");
 	delete("/tmp/gpev4a.sh");
-	ui_print("Installing Viper4Android_FX...");
-	package_extract_dir("additions/audio/Viper4Android/system", "/system/");
-	package_extract_dir("additions/audio/Viper4Android/sdcard", "/sdcard/");		
+	ui_print("-- Success!");
 endif;
+
+#######################Firmware################################
+set_progress(0.75);
+if
+	file_getprop("/tmp/aroma-data/fw.prop","item.0.1") == "1"
+then
+	package_extract_file("tools/checksd.sh", "/tmp/checksd.sh");
+   set_perm(0, 0, 0777, "/tmp/checksd.sh");
+	run_program("/tmp/checksd.sh");;
+	if
+		file_getprop("/tmp/aroma-data/sd.prop","hassd") == "1"
+	then
+		ui_print("-- SD Card Detected - Extracting Firmware");
+		package_extract_file("additions/firmware/0P6BIMG.zip", "/external_sd/0P6BIMG.zip");
+	else
+		ui_print("-- No SD Detected, nothing to do");
+	endif;
+endif;
+ui_print("-- Success!");
+
+set_progress(0.8);
+#######################Carrier################################
+ui_print("@Carrier Selection Tool");
+if
+	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "1"
+then
+	ui_print("-- Installing Verizon-specific files");
+	ui_print("-- It's a Verizon phone!");
+endif;
+if
+	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "2"
+then
+	ui_print("-- Installing Sprint-specific files");
+	package_extract_dir("additions/carrier/SPRINT/system", "/system");
+	ui_print("-- It's a Sprint phone!");
+endif;
+if
+	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "3"
+then
+	ui_print("-- Installing GSM-specific files");
+	package_extract_dir("additions/carrier/GSM/system", "/system");
+	ui_print("-- It's a GSM phone!");
+endif;
+ui_print("-- Success!");
 
 	#restore original linker    
     	package_extract_dir("additions/pie_stock", "/system");
@@ -493,8 +504,8 @@ endif;
 ui_print("@Symlinking and permissions");
 
 set_progress(0.9);
-ui_print("-- Creating toolbox symlinks");
 run_program("/system/xbin/busybox", "--install", "-s", "/system/xbin");
+symlink("../xbin/su", "/system/bin/su");
 symlink("/data/misc/audio/mbhc.bin", "/system/etc/firmware/wcd9320/wcd9320_mbhc.bin");
 symlink("/data/misc/audio/wcd9320_anc.bin", "/system/etc/firmware/wcd9320/wcd9320_anc.bin");
 symlink("/data/misc/audio/wcd9320_mad_audio.bin", "/system/etc/firmware/wcd9320/wcd9320_mad_audio.bin");
@@ -607,15 +618,16 @@ symlink("toolbox", "/system/bin/cat", "/system/bin/chcon",
         "/system/bin/mount", "/system/bin/mv", "/system/bin/nandread",
         "/system/bin/netstat", "/system/bin/newfs_msdos", "/system/bin/nohup",
         "/system/bin/notify", "/system/bin/printenv", "/system/bin/ps",
-        "/system/bin/readlink", "/system/bin/renice", "/system/bin/restorecon",
-        "/system/bin/rm", "/system/bin/rmdir", "/system/bin/rmmod",
-        "/system/bin/route", "/system/bin/runcon", "/system/bin/schedtop",
-        "/system/bin/sendevent", "/system/bin/setenforce",
-        "/system/bin/setprop", "/system/bin/setsebool", "/system/bin/sleep",
-        "/system/bin/smd", "/system/bin/start", "/system/bin/stop",
-        "/system/bin/swapoff", "/system/bin/swapon", "/system/bin/sync",
-        "/system/bin/top", "/system/bin/touch", "/system/bin/umount",
-        "/system/bin/uptime", "/system/bin/vmstat", "/system/bin/watchprops",
+        "/system/bin/r", "/system/bin/readlink", "/system/bin/renice",
+        "/system/bin/restorecon", "/system/bin/rm", "/system/bin/rmdir",
+        "/system/bin/rmmod", "/system/bin/route", "/system/bin/runcon",
+        "/system/bin/schedtop", "/system/bin/sendevent",
+        "/system/bin/setenforce", "/system/bin/setprop",
+        "/system/bin/setsebool", "/system/bin/sleep", "/system/bin/smd",
+        "/system/bin/start", "/system/bin/stop", "/system/bin/swapoff",
+        "/system/bin/swapon", "/system/bin/sync", "/system/bin/top",
+        "/system/bin/touch", "/system/bin/umount", "/system/bin/uptime",
+        "/system/bin/vmstat", "/system/bin/watchprops",
         "/system/bin/wipe");
 
 #######################Setting Permissions######################
@@ -715,19 +727,27 @@ set_metadata("/system/vendor/pittpatt/models/detection/yaw_roll_face_detectors.7
 set_metadata_recursive("/system/vendor/pittpatt/models/recognition", "uid", 0, "gid", 2000, "dmode", 0755, "fmode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
 set_metadata("/system/vendor/pittpatt/models/recognition/face.face.y0-y0-71-N-tree_7-wmd.bin", "uid", 0, "gid", 0, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
 set_metadata_recursive("/system/xbin", "uid", 0, "gid", 2000, "dmode", 0755, "fmode", 0755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-ui_print("All Permissions Set Successfully!");
+set_metadata("/system/xbin/librank", "uid", 0, "gid", 0, "mode", 06755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/xbin/procmem", "uid", 0, "gid", 0, "mode", 06755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/xbin/procrank", "uid", 0, "gid", 0, "mode", 06755, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
+set_metadata("/system/xbin/su", "uid", 0, "gid", 0, "mode", 06755, "capabilities", 0x0, "selabel", "u:object_r:su_exec:s0"); 
+
+ui_print("-- Success!");
 
 
 ######################Kernel Installation#######################
+
 if
 	file_getprop("tmp/aroma/kernel.prop","selected.0") == 1
 then
 	ui_print("");
-	ui_print(">>> Installing Stock Rooted Kernel");
+	ui_print("@Installing Stock Rooted Kernel");
 	set_progress(0.95);
+	ui_print("Extracting boot image");
 	assert(package_extract_file("additions/kernel/Stock/boot.img", "/tmp/boot.img"),
+	ui_print("Flashing boot image");
 	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
-	ui_print(">>> Kernel Installed Successfully!");
+	ui_print("-- Stock Kernel Installed Successfully!");
 endif;
 
 if
@@ -735,20 +755,20 @@ if
 then
 	ui_print("@Installing Elite GPE kernel");
 	set_progress(0.90);
-	ui_print("-extracting boot.img");
-	ui_print("-extracting modules");	
+	ui_print("-- Extracting Boot Image");
+	assert(package_extract_file("additions/kernel/elite/boot.img", "/tmp/boot.img"),
+	ui_print("-- Extracting Modules");	
 	package_extract_dir("additions/kernel/elite/system", "/system");
-	ui_print("Cleaning up");
+	ui_print("-- Cleaning up");
 	delete("/system/lib/modules/s2w_mod.ko");
+	ui_print("-- Setting Permissions");
 	set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
 	symlink("/system/lib/modules/pronto/pronto_wlan.ko", "/system/lib/modules/wlan.ko");
-	ui_print("Setting Permissions");
 	set_perm_recursive(0, 2000, 0777, 0777, "/system/bin/fstrim");
 	set_perm_recursive(0, 2000, 0777, 0777, "/system/etc/init.d/92Elite");
-	ui_print("-flashing boot.img");
-	assert(package_extract_file("additions/kernel/elite/boot.img", "/tmp/boot.img"),
+	ui_print("-- Flashing Boot Image");
 	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
-	ui_print("Elite GPE kernel installed successfully!");
+	ui_print("-- Elite kernel installed successfully!");
 endif;
 
 
@@ -756,86 +776,98 @@ if
 	file_getprop("tmp/aroma/kernel.prop","selected.0") == 3
 then
 	ui_print("");
-	ui_print(">>> Installing Beyondstock Kernel");
+	ui_print("@Installing BeyondStock Kernel");
 	set_progress(0.95);
+	ui_print("Extracting boot image");
 	assert(package_extract_file("additions/kernel/Beyondstock/boot.img", "/tmp/boot.img"),
+	ui_print("Flashing boot image");
 	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
-	ui_print(">>> Kernel Installed Successfully!");
+	ui_print("-- BeyondStock Kernel Installed Successfully!");
 endif;
 
 if
 	file_getprop("tmp/aroma/kernel.prop","selected.0") == 4
 then
 	ui_print("");
-	ui_print(">>> Installing Skydragon Kernel");
+	ui_print("@Installing Skydragon Kernel");
 	set_progress(0.95);
 	########################Mods########################
 
 	if
 	   file_getprop("/tmp/aroma/sky.prop","item.0.1") == "1"
 		 then
-	   ui_print("USB fastcharge enabled");
+	   ui_print("-- USB fastcharge enabled");
 	endif;
 
 	if
 	   file_getprop("/tmp/aroma/sky.prop","item.0.2") == "1"
 		 then
-	   ui_print("fsync disabled");
+	   ui_print("-- Fsync disabled");
 	endif;
 
 	if
 	   file_getprop("/tmp/aroma/sky.prop","item.0.3") == "1"
 		 then
-	   ui_print("Reduce button vibration");
+	   ui_print("-- Reduce button vibration");
 	endif;
 
 	if
 	   file_getprop("/tmp/aroma/sky.prop","item.0.4") == "1"
 		 then
-	   ui_print("Enable gboost");
+	   ui_print("-- Enable gboost");
 	endif;
 	if
 	   file_getprop("/tmp/aroma/sky.prop","item.0.4") == "0"
 		 then
-	   ui_print("Disable gboost");
+	   ui_print("-- Disable gboost");
 	endif;
 
-	ui_print("Extracting new modules for kernel");
+	ui_print("-- Cleaning up");
+	ui_print("-- Extracting modules");
 	package_extract_dir("additions/kernel/Skydragon/system", "/system");
+	ui_print("-- Extracting Kernel");
 	assert(package_extract_file("additions/kernel/Skydragon/boot.img", "/tmp/boot.img"),
+	ui_print("-- Flashing Kernel");
 	run_program("/sbin/dd", "if=/tmp/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot"));
-
 	set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
 	run_program("/tmp/systemcheck.sh");
-
+	ui_print("-- Setting Permissions");
 	set_perm_recursive(0, 2000, 0755, 0755, "/system/etc/init.d/99skydragon");
 	set_perm_recursive(0, 2000, 0755, 0755, "/system/bin/fstrim");
 	set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
 	symlink("/system/lib/modules/pronto/pronto_wlan.ko", "/system/lib/modules/wlan.ko");
-
 	set_perm(0, 0, 0777, "/tmp/buildconfig.sh");
+	ui_print("-- Writing Kernel Configuration");
 	run_program("/tmp/buildconfig.sh");
 	run_program("/tmp/busybox", "cp", "/tmp/skydragon.conf", "/system/etc/skydragon.conf");
+	ui_print("-- SkyDragon Kernel Installed Successfully!");
 endif;
+
+
 ########################Cleaning Process########################
+ui_print("@Final Cleanup");
 set_progress(0.97);
-ui_print("@Erasing Cache Partition");
-format("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/cache", "0", "/cache");
-ui_print("Cache and erased successfully!");
-set_perm_recursive(1000, 1000, 0771, 0644, "/data/app");
+set_perm(0, 0, 0777, "/tmp/modconfig.sh");
+set_perm(0, 0, 0777, "/tmp/save.sh");
+ui_print("-- Writing Mod Configuration");
+run_program("/tmp/modconfig.sh");
+run_program("/tmp/save.sh");
 
 ###########################Unmounting###########################
 set_progress(0.99);
+assert(unmount("/data") || ui_print("(-- Unmounted Data partition..)"));
+assert(unmount("/system") || ui_print("(-- Unmounted System partition..)"));
+set_progress(1.0);
+ui_print("");
+
+run_program("/sbin/busybox", "sleep", "5");
+
+# last thing the script should do
 package_extract_dir("supersu", "/tmp/supersu");
 run_program("/sbin/busybox", "unzip", "/tmp/supersu/supersu.zip", "META-INF/com/google/android/*", "-d", "/tmp/supersu");
 run_program("/sbin/busybox", "sh", "/tmp/supersu/META-INF/com/google/android/update-binary", "dummy", "1", "/tmp/supersu/supersu.zip");
+ui_print("SuperSU installed");
 
-assert(unmount("/data") || ui_print("(Unmounted Data partition..)"));
-assert(unmount("/system") || ui_print("(Unmounted System partition..)"));
-ui_print("@Installing superuser binaries");
-ui_print("Success!");
-set_progress(1.0);
-ui_print("");
-ui_print("Installation Completed Successfully!");
+ui_print("@Installation Completed Successfully!");
 run_program("/sbin/busybox", "cp", "/tmp/recovery.log", "/sdcard/recovery.log");
 set_progress(1.0);

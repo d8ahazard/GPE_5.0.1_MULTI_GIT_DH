@@ -1,2 +1,7 @@
-#!/system/bin/sh
-busybox mount -o remount,ro -t auto /system
+sysrw=$(sqlite3 /data/data/com.android.providers.settings/databases/settings.db "select * from system where name = 'tweaks_system_rw'" | cut -d'|' -f3)
+
+if [ $sysrw != "1" ]; then
+   busybox mount -o ro,remount /system
+else
+   sysrw
+fi

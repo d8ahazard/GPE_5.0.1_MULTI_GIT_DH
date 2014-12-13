@@ -1,30 +1,30 @@
 #!/system/bin/sh
 sysrw
 datarw
-	chmod 755 /system/aroma/addprop
-	#source the magical file
-	. /system/aroma/backprop
-	. /system/aroma/battprop
-	. /system/aroma/menuprop
+	chmod 755 /system/aroma/add.prop
+	#source the magical files
+	. /system/aroma/add.prop
 	#enable longpress on back
 	if
 		[ "$backkey" = "1" ];
 	then
+		echo 1
 		sh /system/bin/tweaks sys tweaks_backkey_kill 1
 	fi
 
 	if
 		[ "$showmenu" = "1" ];
 	then
+		echo 2
 		sh /system/bin/tweaks sys tweaks_show_menu_persist 1
 	fi
-
 	if
 		[ "$battpct" = "1" ];
 	then
+		echo 3
 		sh /system/bin/tweaks sys status_bar_show_battery_percent 1
 	fi
-
+echo Setting Battery Percentage
 # disable google checkin services
 sh /system/bin/tweaks goog perform_market_checkin false
 sh /system/bin/tweaks goog checkin_dropbox_upload true
