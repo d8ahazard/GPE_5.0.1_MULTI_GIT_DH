@@ -14,7 +14,7 @@ run_program("/sbin/mke2fs", "-t", "ext4", "-m", "0", "/dev/block/platform/msm_sd
 ui_print("   Formatting /cache");
 run_program("/sbin/mke2fs", "-t", "ext4", "-m", "0", "/dev/block/platform/msm_sdcc.1/by-name/cache");
 
-if file_getprop("/tmp/aroma-data/wipe.prop", "selected.0") == "2" then
+if file_getprop("/tmp/aroma-data/wipe.prop", "selected.0") == "1" then
 	ui_print("   Wiping /data except for /data/media");
 	run_program("/sbin/busybox", "mount", "/data");
 	#mount("ext4", "EMMC", "data", "/data");

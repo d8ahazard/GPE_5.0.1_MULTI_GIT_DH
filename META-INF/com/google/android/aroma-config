@@ -101,6 +101,38 @@ endif;
 	"Sense Camera","Yes, that one.  Gallery/zoe doesn't work",1,
 	"HTC Weather","Uh...HTC's Weather app",0
 	);
+
+	#####################GApps####################################
+	checkbox(
+		"Additional Apps",
+		"Please select which Gapps you'd like:",
+		"icons/apps",
+		"gapps.prop",
+
+	"Install to data instead of system","Makes apps removable",0,
+	"Books","",0,
+	"Chrome","",1,
+	"Drive","",1,
+	"Docs","",0,
+	"Earth","",0,
+	"Google Camera","",1,
+	"Hangouts","",1,
+	"Keep","",1,
+	"Maps","",1,
+	"NewsStand","",0,
+	"News and Weather","",0,
+	"Photos","",1,
+	"Play Games","",0,
+	"Play Music","",1,
+	"Plus","Needed for photos to work correctly",1,
+	"Sheets","",0,
+	"Slides","",0,
+	"Street","",0,
+	"Videos","",0,
+	"Youtube","",1
+	);
+
+	
 ####################MODS######################################
   checkbox(
     "System Mods",

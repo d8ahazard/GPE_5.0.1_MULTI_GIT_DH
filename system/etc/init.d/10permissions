@@ -6,9 +6,6 @@ sysrw
 
 echo "Setting permissions"
 
-chmod 0755 /system/xbin/su
-chmod 4755 /system/xbin/busybox
-chmod 644 /system/build.prop
 chown system:system /data/system
 chmod -R 755 /data/app-lib
 chown system:system /data/app-lib
