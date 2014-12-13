@@ -251,6 +251,255 @@ then
 endif;
 ui_print("-- Success!");
 
+
+##########################GAPPS################################
+ui_print("@Installing Google Apps");
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.2") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Books", "/data/app/Books");
+	else
+		package_extract_dir("additions/gapps/Books", "/system/app/Books");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.3") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Chrome", "/data/app/Chrome");
+	else
+		package_extract_dir("additions/gapps/Chrome", "/system/app/Chrome");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.4") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Drive", "/data/app/Drive");
+	else
+		package_extract_dir("additions/gapps/Drive", "/system/app/Drive");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.5") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/EditorsDocs", "/data/app/EditorsDocs");
+	else
+		package_extract_dir("additions/gapps/EditorsDocs", "/system/app/EditorsDocs");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.6") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/GoogleEarth", "/data/app/GoogleEarth");
+	else
+		package_extract_dir("additions/gapps/GoogleEarth", "/system/app/GoogleEarth");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.7") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/GoogleCamera", "/data/app/GoogleCamera");
+	else
+		package_extract_dir("additions/gapps/GoogleCamera", "/system/app/GoogleCamera");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.8") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Hangouts", "/data/app/Hangouts");
+	else
+		package_extract_dir("additions/gapps/Hangouts", "/system/app/Hangouts");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.9") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Keep", "/data/app/Keep");
+	else
+		package_extract_dir("additions/gapps/Keep", "/system/app/Keep");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.10") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Maps", "/data/app/Maps");
+	else
+		package_extract_dir("additions/gapps/Maps", "/system/app/Maps");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.11") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/NewsStand", "/data/app/NewsStand");
+	else
+		package_extract_dir("additions/gapps/NewsStand", "/system/app/NewsStand");
+	endif;
+endif;
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.12") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/NewsWeather", "/data/app/NewsWeather");
+	else
+		package_extract_dir("additions/gapps/NewsWeather", "/system/app/NewsWeather");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.13") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Photos", "/data/app/Photos");
+	else
+		package_extract_dir("additions/gapps/Photos", "/system/app/Photos");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.14") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/PlayGames", "/data/app/PlayGames");
+	else
+		package_extract_dir("additions/gapps/PlayGames", "/system/app/PlayGames");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.15") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/PlusOne", "/data/app/PlusOne");
+	else
+		package_extract_dir("additions/gapps/PlusOne", "/system/app/PlusOne");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.16") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/EditorsSheets", "/data/app/EditorsSheets");
+	else
+		package_extract_dir("additions/gapps/EditorsSheets", "/system/app/EditorsSheets");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.17") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/EditorsSlides", "/data/app/EditorsSlides");
+	else
+		package_extract_dir("additions/gapps/EditorsSlides", "/system/app/EditorsSlides");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.18") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Street", "/data/app/Street");
+	else
+		package_extract_dir("additions/gapps/Street", "/system/app/Street");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.19") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Videos", "/data/app/Videos");
+	else
+		package_extract_dir("additions/gapps/Videos", "/system/app/Videos");
+	endif;
+endif;
+
+if
+	file_getprop("tmp/aroma-data/gapps.prop","item.0.20") == "1"
+then	
+	if
+		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
+	then	
+		package_extract_dir("additions/gapps/Youtube", "/data/app/Youtube");
+	else
+		package_extract_dir("additions/gapps/Youtube", "/system/app/Youtube");
+	endif;
+endif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+ui_print("-- Success!");
+
+
+
+
+
 #####################MODS####################################################
 ui_print("@Applying Custom Modifications");
 
