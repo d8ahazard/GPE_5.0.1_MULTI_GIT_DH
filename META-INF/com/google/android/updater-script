@@ -10,14 +10,13 @@ ifelse(is_mounted("/system") == "/system", unmount("/system"));
 
 ui_print("@Formatting Partitions");
 ui_print("-- Formatting /system");
-run_program("/sbin/mke2fs", "-t", "ext4", "-m", "0", "/dev/block/platform/msm_sdcc.1/by-name/system");
-ui_print("   Formatting /cache");
-run_program("/sbin/mke2fs", "-t", "ext4", "-m", "0", "/dev/block/platform/msm_sdcc.1/by-name/cache");
+ui_print("-- Erasing & formatting /system as EXT4");
+assert(unmount("/system") || ui_print("(Unmounted System partition..)"));
+format("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "0", "/system");
+ui_print("-- System Partition Formatted");
 
 if file_getprop("/tmp/aroma-data/wipe.prop", "selected.0") == "1" then
-	ui_print("   Wiping /data except for /data/media");
-	run_program("/sbin/busybox", "mount", "/data");
-	#mount("ext4", "EMMC", "data", "/data");
+	ui_print("-- Wiping /data except for /data/media");
 	run_program("/sbin/busybox", "sh", "/tmp/wipe.sh");
 	ifelse(is_mounted("/data") == "/data", unmount("/data"));
 	set_progress(0.05);
@@ -26,6 +25,10 @@ if file_getprop("/tmp/aroma-data/wipe.prop", "selected.0") == "1" then
 	delete_recursive("/sdcard/.bookmark_thumb1");
 	delete_recursive("/sdcard/LazyList");
 	delete_recursive("/sdcard/LOST.DIR");
+endif;
+ui_print("-- Success!");
+
+if file_getprop("/tmp/aroma-data/wipe.prop", "selected.0") == "2" then
 	ui_print("-- Deleting problem files");
 	delete("/data/data/com.android.providers.telephony/databases/telephony.db");
 	delete("/data/data/com.android.providers.telephony/databases/telephony.db-journal");
@@ -140,9 +143,7 @@ if file_getprop("/tmp/aroma-data/wipe.prop", "selected.0") == "1" then
 	delete_recursive("data/app/Youtube");
 	ui_print("-- Youtube");
 	ui_print("-- Success!");
-	endif;
-ui_print("-- Success!");
-
+endif;
 ##########################Installation##########################
 
 ui_print("@Installing ROM");
@@ -257,7 +258,8 @@ ui_print("@Installing Google Apps");
 
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.2") == "1"
-then	
+then
+	ui_print("-- Books");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -270,6 +272,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.3") == "1"
 then	
+	ui_print("-- Chrome");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -281,7 +284,8 @@ endif;
 
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.4") == "1"
-then	
+then
+	ui_print("-- Drive");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -294,6 +298,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.5") == "1"
 then	
+	ui_print("-- Docs");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -306,6 +311,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.6") == "1"
 then	
+	ui_print("-- Earth");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -318,6 +324,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.7") == "1"
 then	
+	ui_print("-- Google Camera");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -330,6 +337,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.8") == "1"
 then	
+	ui_print("-- Hangouts");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -342,6 +350,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.9") == "1"
 then	
+	ui_print("-- Keep");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -354,6 +363,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.10") == "1"
 then	
+	ui_print("-- Maps");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -366,6 +376,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.11") == "1"
 then	
+	ui_print("-- NewsStand");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -377,6 +388,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.12") == "1"
 then	
+	ui_print("-- News and Weather");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -389,6 +401,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.13") == "1"
 then	
+	ui_print("-- Photos");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -401,6 +414,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.14") == "1"
 then	
+	ui_print("-- Play Games");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -413,6 +427,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.15") == "1"
 then	
+	ui_print("-- Plus");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -424,7 +439,8 @@ endif;
 
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.16") == "1"
-then	
+then
+	ui_print("-- Sheets");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -437,6 +453,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.17") == "1"
 then	
+	ui_print("-- Slides");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -449,6 +466,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.18") == "1"
 then	
+	ui_print("-- Street");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -461,6 +479,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.19") == "1"
 then	
+	ui_print("-- Videos");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -473,6 +492,7 @@ endif;
 if
 	file_getprop("tmp/aroma-data/gapps.prop","item.0.20") == "1"
 then	
+	ui_print("-- Youtube");
 	if
 		file_getprop("tmp/aroma-data/gapps.prop","item.0.1") == "1"
 	then	
@@ -481,24 +501,7 @@ then
 		package_extract_dir("additions/gapps/Youtube", "/system/app/Youtube");
 	endif;
 endif;
-
-
-
-
-
-
-
-
-
-
-
-
-
 ui_print("-- Success!");
-
-
-
-
 
 #####################MODS####################################################
 ui_print("@Applying Custom Modifications");
@@ -572,11 +575,6 @@ then
 	package_extract_dir("additions/adblock/system", "/system");
 endif;
 
-if
-	file_getprop("tmp/aroma-data/mods.prop","item.0.8") == "1"
-then
-	
-endif;
 
 ######################Audio#####################################
 set_progress(0.85);
@@ -687,6 +685,7 @@ then
 	ui_print("-- Installing Verizon-specific files");
 	package_extract_dir("additions/carrier/VZW/system", "/system");
 	package_extract_dir("additions/carrier/VZW/res", "/tmp/res");
+	run_program("/tmp/cst.sh");
 	ui_print("-- It's a Verizon phone!");
 endif;
 if
@@ -695,14 +694,17 @@ then
 	ui_print("-- Installing Sprint-specific files");
 	package_extract_dir("additions/carrier/SPRINT/system", "/system");
 	package_extract_dir("additions/carrier/SPRINT/res", "/tmp/res");
+	run_program("/tmp/cst.sh");
 	ui_print("-- It's a Sprint phone!");
 endif;
+
 if
 	file_getprop("/tmp/aroma-data/carrier.prop","selected.0") == "3"
 then
 	ui_print("-- Already GSM-based...nothing to do!");
 	ui_print("-- It's a GSM phone!");
 endif;
+
 ui_print("-- Success!");
 
 	#restore original linker    
@@ -948,13 +950,16 @@ ui_print("-- Success!");
 ui_print("");
 ui_print("@Installing Kernel");
 ui_print("-- Extracting boot image");
-assert(package_extract_file("additions/kernel/Stock/boot.img", "/tmp/anykernel/boot.img"),
+ui_print("Extracting boot image");
+package_extract_dir("additions/kernel/anykernel/", "/tmp/anykernel/");
+ui_print("Flashing boot image");
+
 if
 	file_getprop("/tmp/aroma-data/kernel.prop","selected.0") == "1" 
 then
-	ui_print(@Installing Stock Kernel");
+	ui_print("@Installing Stock Kernel");
+	run_program("/sbin/dd", "if=/tmp/anykernel/boot.img", "of=/dev/block/platform/msm_sdcc.1/by-name/boot");
 endif;
-
 
 if
 	file_getprop("/tmp/aroma-data/kernel.prop","selected.0") == "2" 
@@ -962,7 +967,7 @@ then
 	ui_print("@Installing Elite GPE kernel");
 	set_progress(0.90);
 	ui_print("-- Extracting Image Files");
-	package_extract_dir("additions/kernel/elite/res", "/tmp/anykernel");
+	package_extract_dir("additions/kernel/elite/res", "/tmp/anykernel/res/");
 	ui_print("-- Setting Permissions");
 	set_perm_recursive(0, 2000, 0777, 0777, "/tmp/anykernel.sh");
 	ui_print("-- Executing Anykernel Magic");
@@ -988,11 +993,6 @@ then
 	set_perm_recursive(0, 2000, 0777, 0777, "/tmp/anykernel.sh");
 	ui_print("-- Executing Anykernel Magic");
 	run_program("/tmp/anykernel.sh");
-#	ui_print("-- Deleting old modules");
-#	delete_recursive("/system/lib/modules");
-#	ui_print("-- Extracting modules");
-#	package_extract_dir("additions/kernel/elite/system/", "/system/");
-#	set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
 	ui_print("-- Beyondstock kernel installed successfully!");
 endif;
 
@@ -1049,8 +1049,6 @@ run_program("/sbin/busybox", "sleep", "5");
 package_extract_dir("supersu", "/tmp/supersu");
 run_program("/sbin/busybox", "unzip", "/tmp/supersu/supersu.zip", "META-INF/com/google/android/*", "-d", "/tmp/supersu");
 run_program("/sbin/busybox", "sh", "/tmp/supersu/META-INF/com/google/android/update-binary", "dummy", "1", "/tmp/supersu/supersu.zip");
-ui_print("SuperSU installed");
-
 ui_print("@Installation Completed Successfully!");
 run_program("/sbin/busybox", "cp", "/tmp/recovery.log", "/sdcard/recovery.log");
 set_progress(1.0);
