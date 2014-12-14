@@ -12,7 +12,17 @@ if [ -e $fullname ]; then
 
         echo "Processing $fullname"
         /tmp/zip -r $fullname *
-        
+
+        echo "Zipaligning $fullname"
+        cd /system/lib
+        /tmp/zipalign -f 4 $fullname /cache/$filename
+
+        if [ -e /cache/$filename ]; then
+            cp -f -p /cache/$filename $fullname
+            rm /cache/$filename
+        else
+            echo ZipAligning $filename failed
+        fi;
     else
         echo $filename not found
     fi;
